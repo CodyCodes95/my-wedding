@@ -14,24 +14,24 @@ export default function Header() {
 
 	return (
 		<div className="bg-[#f8f6f3]">
-			<div className="flex items-center justify-between px-6 pt-4">
-				{/* Left Navigation */}
-				<nav className="flex gap-6">
-					{links.map(({ to, label }) => {
-						return (
-							<Link
-								key={to}
-								href={to}
-								className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-							>
-								{label}
-							</Link>
-						);
-					})}
-				</nav>
+		<div className="flex items-center justify-between px-6 pt-4">
+			{/* Left Navigation - Hidden on mobile */}
+			<nav className="hidden md:flex gap-6">
+				{links.map(({ to, label }) => {
+					return (
+						<Link
+							key={to}
+							href={to}
+							className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+						>
+							{label}
+						</Link>
+					);
+				})}
+			</nav>
 
-				{/* Right Logo + RSVP Button */}
-				<div className="flex items-center gap-4">
+			{/* Right Logo + RSVP Button */}
+			<div className="flex items-center gap-4 md:ml-0 ml-auto">
 					<div className="flex-shrink-0">
 						<Image
 							src="/outline-no-bg.png"

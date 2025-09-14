@@ -3,6 +3,7 @@
 import Image from "next/image";
 import SectionDivider from "@/components/section-divider";
 import CircularGallery from "@/components/CircularGallery";
+import DomeGallery from "@/components/DomeGallery";
 import { useState, useCallback, useMemo } from "react";
 import { ArcTimeline, type ArcTimelineItem } from "@/components/magicui/arc-timeline";
 import {
@@ -97,6 +98,24 @@ const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
 			},
 		],
 	},
+];
+
+// Images for the Dome Gallery
+const OUR_PHOTOS = [
+	"/us/1.jpg",
+	"/us/2.JPG",
+	"/us/10.JPG",
+	"/us/11.jpg",
+	"/us/12.jpg",
+	"/us/13.jpg",
+	"/us/14.jpg",
+	"/us/15.JPG",
+	"/us/16.jpg",
+	"/us/17.jpg",
+	"/us/18.JPG",
+	"/us/19.jpg",
+	"/us/20.JPG",
+	"/us/21.JPG",
 ];
 
 type Hotel = {
@@ -249,6 +268,22 @@ export default function DetailsPage() {
 					</div>
 				</div>
 			</section>
+
+				<div className="relative w-full" style={{ height: '80vh' }}>
+					<DomeGallery
+						images={OUR_PHOTOS}
+						fit={0.7}
+						minRadius={400}
+						maxRadius={900}
+						overlayBlurColor="transparent"
+						grayscale={false}
+						imageBorderRadius="15px"
+						openedImageBorderRadius="25px"
+						openedImageWidth="500px"
+						openedImageHeight="500px"
+					/>
+				</div>
+			
 
 			<SectionDivider />
 

@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@tanstack/react-form": "^1.12.3",
+		"@use-gesture/react": "^10.3.1",
 		"@wedding/backend": "workspace:*",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
