@@ -614,11 +614,8 @@ export default function DetailsPage() {
           <div className="space-y-8">
             <div className="text-center">
               <h3 className="mb-4 font-medium text-2xl">Recommended Hotels</h3>
-              <p className="mb-8 text-muted-foreground">
-                We've reserved room blocks at the following hotels for your
-                convenience. Scroll through and click on any hotel to see
-                booking details.
-              </p>
+   
+   
             </div>
             <div style={{ height: '600px', position: 'relative' }}>
               <CircularGallery
