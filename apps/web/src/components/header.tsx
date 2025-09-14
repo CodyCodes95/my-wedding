@@ -7,7 +7,7 @@ export default function Header() {
   const links = [
     { to: '#details', label: 'Details' },
     { to: '#about', label: 'Our Story' },
-    { to: '#travel', label: 'Travel' },
+    { to: '#getting-there', label: 'Getting there' },
     { to: '#accommodation', label: 'Accommodation' },
     { to: '#faqs', label: 'FAQs' },
   ];

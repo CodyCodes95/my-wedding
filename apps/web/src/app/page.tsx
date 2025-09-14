@@ -42,6 +42,7 @@ export default function Home() {
         </h1>
         <div className="mt-8">
           <Link
+            prefetch={true}
             className={cn(
               buttonVariants({ size: 'lg' }),
               'bg-white text-black hover:bg-white/90'
