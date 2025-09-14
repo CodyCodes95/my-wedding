@@ -1,5 +1,6 @@
 import Image from "next/image";
 import SectionDivider from "@/components/section-divider";
+import CircularGallery from "@/components/CircularGallery";
 
 export const dynamic = "force-static";
 
@@ -120,28 +121,22 @@ export default function DetailsPage() {
 
 			{/* Accommodation Section */}
 			<section id="accommodation" className="py-16">
-				<div className="container mx-auto max-w-4xl px-4">
+				<div className="container mx-auto max-w-6xl px-4">
 					<h2 className="text-4xl font-light text-center mb-8 text-primary">Accommodation</h2>
 					<div className="space-y-8">
 						<div className="text-center">
 							<h3 className="text-2xl font-medium mb-4">Recommended Hotels</h3>
 							<p className="text-muted-foreground mb-8">
-								We've reserved room blocks at the following hotels for your convenience.
+								We've reserved room blocks at the following hotels for your convenience. Scroll through to see details on each.
 							</p>
 						</div>
-						<div className="grid md:grid-cols-2 gap-8">
-							<div className="border rounded-lg p-6">
-								<h4 className="text-xl font-medium mb-2">Hotel Name 1</h4>
-								<p className="text-muted-foreground mb-2">123 Hotel Street</p>
-								<p className="text-muted-foreground mb-4">City, State 12345</p>
-								<p className="text-sm">Block code and booking details coming soon.</p>
-							</div>
-							<div className="border rounded-lg p-6">
-								<h4 className="text-xl font-medium mb-2">Hotel Name 2</h4>
-								<p className="text-muted-foreground mb-2">456 Lodge Avenue</p>
-								<p className="text-muted-foreground mb-4">City, State 12345</p>
-								<p className="text-sm">Block code and booking details coming soon.</p>
-							</div>
+						<div style={{ height: '600px', position: 'relative' }}>
+							<CircularGallery 
+								bend={3} 
+								textColor="#ffffff" 
+								borderRadius={0.05} 
+								scrollEase={0.02}
+							/>
 						</div>
 					</div>
 				</div>
