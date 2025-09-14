@@ -12,6 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 			attribute="class"
 			defaultTheme="system"
 			enableSystem
+			forcedTheme="light"
 			disableTransitionOnChange
 		>
 			<ConvexProvider client={convex}>{children}</ConvexProvider>

@@ -1,46 +1,43 @@
-"use client";
-import { useQuery } from "convex/react";
-import { api } from "@wedding/backend/convex/_generated/api";
-
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
-	const healthCheck = useQuery(api.healthCheck.get);
-
 	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck === "OK" ? "bg-green-500" : healthCheck === undefined ? "bg-orange-400" : "bg-red-500"}`}
-						/>
-						<span className="text-sm text-muted-foreground">
-							{healthCheck === undefined
-								? "Checking..."
-								: healthCheck === "OK"
-									? "Connected"
-									: "Error"}
-						</span>
-					</div>
-				</section>
-			</div>
-		</div>
+		<main className="container mx-auto max-w-5xl px-4 py-10">
+			<section className="grid items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
+				<div className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-xl">
+					<Image
+						src="/ash.jpg"
+						alt="Ash"
+						fill
+						priority
+						sizes="(max-width: 768px) 50vw, 25vw"
+						className="object-cover"
+					/>
+				</div>
+				<div className="flex flex-col items-center gap-4">
+					<h1 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">
+						Ashley & Cody
+					</h1>
+					<p className="text-center text-muted-foreground">
+						We're so glad you're here.
+					</p>
+					<Link href="/details" className={cn(buttonVariants({ size: "lg" }))}>
+						Enter
+					</Link>
+				</div>
+				<div className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-xl">
+					<Image
+						src="/cody.jpg"
+						alt="Cody"
+						fill
+						sizes="(max-width: 768px) 50vw, 25vw"
+						className="object-cover"
+					/>
+				</div>
+			</section>
+		</main>
 	);
 }
