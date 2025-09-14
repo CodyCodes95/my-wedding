@@ -1,6 +1,5 @@
-"use client";
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 
 import './CircularGallery.css';
 
@@ -155,6 +154,8 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
+  onSelect?: (index: number) => void;
+  app?: App;
 }
 
 class Media {
@@ -173,6 +174,8 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
+  onSelect?: (index: number) => void;
+  app?: App;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -199,7 +202,9 @@ class Media {
     bend,
     textColor,
     borderRadius = 0,
-    font
+    font,
+    onSelect,
+    app
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -215,6 +220,8 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.onSelect = onSelect;
+    this.app = app;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -373,6 +380,15 @@ class Media {
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
   }
+
+  handleClick() {
+    if (this.onSelect) {
+      this.onSelect(this.index);
+    }
+    if (this.app) {
+      this.app.scrollToIndex(this.index);
+    }
+  }
 }
 
 interface AppConfig {
@@ -383,6 +399,7 @@ interface AppConfig {
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  onSelect?: (index: number) => void;
 }
 
 class App {
@@ -396,6 +413,7 @@ class App {
     position?: number;
   };
   onCheckDebounce: (...args: any[]) => void;
+  onSelect?: (index: number) => void;
   renderer!: Renderer;
   gl!: GL;
   camera!: Camera;
@@ -412,6 +430,7 @@ class App {
   boundOnTouchDown!: (e: MouseEvent | TouchEvent) => void;
   boundOnTouchMove!: (e: MouseEvent | TouchEvent) => void;
   boundOnTouchUp!: () => void;
+  boundOnClick!: (e: MouseEvent) => void;
 
   isDown: boolean = false;
   start: number = 0;
@@ -425,7 +444,8 @@ class App {
       borderRadius = 0,
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
-      scrollEase = 0.05
+      scrollEase = 0.05,
+      onSelect
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
@@ -433,6 +453,7 @@ class App {
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
+    this.onSelect = onSelect;
     this.createRenderer();
     this.createCamera();
     this.createScene();
@@ -545,7 +566,9 @@ class App {
         bend,
         textColor,
         borderRadius,
-        font
+        font,
+        onSelect: this.onSelect,
+        app: this
       });
     });
   }
@@ -568,8 +591,37 @@ class App {
     this.onCheck();
   }
 
+  onClick(e: MouseEvent) {
+    // Only handle clicks if we're not dragging
+    if (this.isDown) return;
+    
+    const rect = this.container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const centerX = rect.width / 2;
+    
+    // Find the media item closest to the center
+    let closestMedia: Media | null = null;
+    let closestDistance = Number.MAX_VALUE;
+    
+    for (const media of this.medias) {
+      // Calculate the screen position of this media item
+      const mediaScreenX = centerX - media.plane.position.x * (this.screen.width / this.viewport.width);
+      const distance = Math.abs(mediaScreenX - x);
+      
+      if (distance < closestDistance && distance < media.width * (this.screen.width / this.viewport.width) / 2) {
+        closestDistance = distance;
+        closestMedia = media;
+      }
+    }
+    
+    if (closestMedia) {
+      closestMedia.handleClick();
+    }
+  }
+
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
+    wheelEvent.preventDefault(); // Prevent page scrolling when interacting with gallery
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
@@ -581,6 +633,14 @@ class App {
     const itemIndex = Math.round(Math.abs(this.scroll.target) / width);
     const item = width * itemIndex;
     this.scroll.target = this.scroll.target < 0 ? -item : item;
+  }
+
+  scrollToIndex(index: number) {
+    if (!this.medias || !this.medias[0]) return;
+    const width = this.medias[0].width;
+    // Calculate the target scroll position for the given index
+    const targetPosition = width * (index % (this.medias.length / 2)); // Use original length, not doubled
+    this.scroll.target = targetPosition;
   }
 
   onResize() {
@@ -618,28 +678,30 @@ class App {
     this.boundOnTouchDown = this.onTouchDown.bind(this);
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
+    this.boundOnClick = this.onClick.bind(this);
     window.addEventListener('resize', this.boundOnResize);
-    window.addEventListener('mousewheel', this.boundOnWheel);
-    window.addEventListener('wheel', this.boundOnWheel);
-    window.addEventListener('mousedown', this.boundOnTouchDown);
-    window.addEventListener('mousemove', this.boundOnTouchMove);
-    window.addEventListener('mouseup', this.boundOnTouchUp);
-    window.addEventListener('touchstart', this.boundOnTouchDown);
-    window.addEventListener('touchmove', this.boundOnTouchMove);
-    window.addEventListener('touchend', this.boundOnTouchUp);
+    // Only listen to wheel events on the container, not the whole window
+    this.container.addEventListener('wheel', this.boundOnWheel, { passive: false });
+    this.container.addEventListener('mousedown', this.boundOnTouchDown);
+    this.container.addEventListener('mousemove', this.boundOnTouchMove);
+    this.container.addEventListener('mouseup', this.boundOnTouchUp);
+    this.container.addEventListener('click', this.boundOnClick);
+    this.container.addEventListener('touchstart', this.boundOnTouchDown);
+    this.container.addEventListener('touchmove', this.boundOnTouchMove);
+    this.container.addEventListener('touchend', this.boundOnTouchUp);
   }
 
   destroy() {
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.boundOnResize);
-    window.removeEventListener('mousewheel', this.boundOnWheel);
-    window.removeEventListener('wheel', this.boundOnWheel);
-    window.removeEventListener('mousedown', this.boundOnTouchDown);
-    window.removeEventListener('mousemove', this.boundOnTouchMove);
-    window.removeEventListener('mouseup', this.boundOnTouchUp);
-    window.removeEventListener('touchstart', this.boundOnTouchDown);
-    window.removeEventListener('touchmove', this.boundOnTouchMove);
-    window.removeEventListener('touchend', this.boundOnTouchUp);
+    this.container.removeEventListener('wheel', this.boundOnWheel);
+    this.container.removeEventListener('mousedown', this.boundOnTouchDown);
+    this.container.removeEventListener('mousemove', this.boundOnTouchMove);
+    this.container.removeEventListener('mouseup', this.boundOnTouchUp);
+    this.container.removeEventListener('click', this.boundOnClick);
+    this.container.removeEventListener('touchstart', this.boundOnTouchDown);
+    this.container.removeEventListener('touchmove', this.boundOnTouchMove);
+    this.container.removeEventListener('touchend', this.boundOnTouchUp);
     if (this.renderer && this.renderer.gl && this.renderer.gl.canvas.parentNode) {
       this.renderer.gl.canvas.parentNode.removeChild(this.renderer.gl.canvas as HTMLCanvasElement);
     }
@@ -654,16 +716,18 @@ interface CircularGalleryProps {
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  onSelect?: (index: number) => void;
 }
 
-export default function CircularGallery({
+const CircularGallery = memo(function CircularGallery({
   items,
   bend = 3,
   textColor = '#ffffff',
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
-  scrollEase = 0.05
+  scrollEase = 0.05,
+  onSelect
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -675,11 +739,14 @@ export default function CircularGallery({
       borderRadius,
       font,
       scrollSpeed,
-      scrollEase
+      scrollEase,
+      onSelect
     });
     return () => {
       app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, onSelect]);
   return <div className="circular-gallery" ref={containerRef} />;
-}
+});
+
+export default CircularGallery;

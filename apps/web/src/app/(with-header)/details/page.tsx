@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import SectionDivider from "@/components/section-divider";
 import CircularGallery from "@/components/CircularGallery";
+import { useState, useCallback, useMemo } from "react";
 import { ArcTimeline, type ArcTimelineItem } from "@/components/magicui/arc-timeline";
 import {
 	Heart,
@@ -13,7 +16,6 @@ import {
 	Gift,
 } from "lucide-react";
 
-export const dynamic = "force-static";
 
 const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
 	{
@@ -97,7 +99,82 @@ const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
 	},
 ];
 
+type Hotel = {
+	image: string;
+	text: string;
+	name: string;
+	address: string;
+	phone: string;
+	website: string;
+	blockCode: string;
+	rate: string;
+	amenities: string[];
+	description: string;
+};
+
+const HOTELS: Hotel[] = [
+	{
+		image: 'https://picsum.photos/seed/hotel1/800/600',
+		text: 'The Grand Plaza',
+		name: 'The Grand Plaza Hotel',
+		address: '123 Main Street, City, State 12345',
+		phone: '(555) 123-4567',
+		website: 'grandplaza.com',
+		blockCode: 'SMITH-WEDDING',
+		rate: '$189/night',
+		amenities: ['Free WiFi', 'Pool & Spa', 'Fitness Center', 'Restaurant', 'Valet Parking'],
+		description: 'Elegant downtown hotel featuring spacious rooms with city views, award-winning dining, and premium amenities. Just 5 minutes from the wedding venue.'
+	},
+	{
+		image: 'https://picsum.photos/seed/hotel2/800/600',
+		text: 'Garden Inn & Suites',
+		name: 'Garden Inn & Suites',
+		address: '456 Park Avenue, City, State 12345',
+		phone: '(555) 234-5678',
+		website: 'gardeninn.com',
+		blockCode: 'SMITH-BLOCK',
+		rate: '$149/night',
+		amenities: ['Complimentary Breakfast', 'Free Parking', 'Business Center', 'Pet Friendly'],
+		description: 'Comfortable and modern hotel surrounded by beautiful gardens. Perfect for families and extended stays with spacious suites and excellent amenities.'
+	},
+	{
+		image: 'https://picsum.photos/seed/hotel3/800/600',
+		text: 'Riverside Lodge',
+		name: 'Riverside Lodge',
+		address: '789 River Road, City, State 12345',
+		phone: '(555) 345-6789',
+		website: 'riversidelodge.com',
+		blockCode: 'CODYASH2026',
+		rate: '$169/night',
+		amenities: ['Riverside Views', 'Outdoor Terrace', 'Continental Breakfast', 'Free WiFi'],
+		description: 'Charming boutique lodge overlooking the river with rustic elegance and personalized service. Features cozy rooms and stunning water views.'
+	},
+	{
+		image: 'https://picsum.photos/seed/hotel4/800/600',
+		text: 'Historic Manor',
+		name: 'The Historic Manor',
+		address: '321 Heritage Lane, City, State 12345',
+		phone: '(555) 456-7890',
+		website: 'historicmanor.com',
+		blockCode: 'WEDDING2026',
+		rate: '$199/night',
+		amenities: ['Historic Architecture', 'Fine Dining', 'Concierge Service', 'Spa Services'],
+		description: 'A beautifully restored historic property offering luxury accommodations with old-world charm and modern conveniences.'
+	}
+];
+
 export default function DetailsPage() {
+	const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
+	
+	const handleHotelSelect = useCallback((index: number) => {
+		setSelectedHotel(HOTELS[index % HOTELS.length]);
+	}, []);
+
+	const hotelItems = useMemo(() => 
+		HOTELS.map(hotel => ({ image: hotel.image, text: hotel.text })), 
+		[]
+	);
+
 	return (
 		<div className="bg-background">
 			{/* Hero Section */}
@@ -217,17 +294,77 @@ export default function DetailsPage() {
 						<div className="text-center">
 							<h3 className="text-2xl font-medium mb-4">Recommended Hotels</h3>
 							<p className="text-muted-foreground mb-8">
-								We've reserved room blocks at the following hotels for your convenience. Scroll through to see details on each.
+								We've reserved room blocks at the following hotels for your convenience. Scroll through and click on any hotel to see booking details.
 							</p>
 						</div>
 						<div style={{ height: '600px', position: 'relative' }}>
 							<CircularGallery 
+								items={hotelItems}
 								bend={3} 
 								textColor="#ffffff" 
 								borderRadius={0.05} 
 								scrollEase={0.02}
+								onSelect={handleHotelSelect}
 							/>
 						</div>
+						
+						{/* Hotel Details */}
+						{selectedHotel && (
+							<div className="mt-12 max-w-4xl mx-auto">
+								<div className="bg-card border rounded-lg p-8">
+									<div className="grid md:grid-cols-2 gap-8">
+										<div>
+											<h3 className="text-2xl font-medium mb-4">{selectedHotel.name}</h3>
+											<p className="text-muted-foreground mb-4">{selectedHotel.description}</p>
+											
+											<div className="space-y-3 mb-6">
+												<div>
+													<strong className="text-sm">Address:</strong>
+													<p className="text-muted-foreground">{selectedHotel.address}</p>
+												</div>
+												<div>
+													<strong className="text-sm">Phone:</strong>
+													<p className="text-muted-foreground">{selectedHotel.phone}</p>
+												</div>
+												<div>
+													<strong className="text-sm">Website:</strong>
+													<p className="text-muted-foreground">{selectedHotel.website}</p>
+												</div>
+											</div>
+										</div>
+										
+										<div>
+											<div className="bg-primary/5 rounded-lg p-6 mb-6">
+												<h4 className="font-medium mb-2">Wedding Block Details</h4>
+												<div className="space-y-2 text-sm">
+													<div>
+														<strong>Block Code:</strong> {selectedHotel.blockCode}
+													</div>
+													<div>
+														<strong>Rate:</strong> {selectedHotel.rate}
+													</div>
+													<p className="text-muted-foreground text-xs mt-3">
+														Mention the block code when booking to receive the special wedding rate.
+													</p>
+												</div>
+											</div>
+											
+											<div>
+												<h4 className="font-medium mb-3">Amenities</h4>
+												<ul className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
+													{selectedHotel.amenities.map((amenity, index) => (
+														<li key={index} className="flex items-center">
+															<span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+															{amenity}
+														</li>
+													))}
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 			</section>
