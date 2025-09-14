@@ -6,7 +6,7 @@ export default function WithHeaderLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<div className="grid h-svh grid-rows-[auto_1fr]">
+		<div className="min-h-screen">
 			<Header />
 			{children}
 		</div>
