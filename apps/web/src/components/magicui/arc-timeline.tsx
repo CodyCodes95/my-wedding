@@ -1,7 +1,7 @@
-"use client";
-import { cn } from "@/lib/utils";
-import { useState, useRef, useCallback, useEffect } from "react";
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+'use client';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface ArcTimelineItem {
   time: ReactNode;
@@ -10,7 +10,7 @@ export interface ArcTimelineItem {
     content: ReactNode;
   }>;
 }
-interface ArcTimelineProps extends ComponentPropsWithoutRef<"div"> {
+interface ArcTimelineProps extends ComponentPropsWithoutRef<'div'> {
   /**
    * Optional CSS class name to apply custom styles
    */
@@ -84,15 +84,14 @@ export function ArcTimeline(props: ArcTimelineProps) {
         if (timelineItem.time === defaultActiveTime) {
           count += defaultActiveStepIndex;
           break;
-        } else {
-          count += timelineItem.steps.length;
         }
+        count += timelineItem.steps.length;
       }
       return (
         -1 * count * angleBetweenMinorSteps * (lineCountFillBetweenSteps + 1) -
         angleBetweenMinorSteps * boundaryPlaceholderLinesCount
       );
-    },
+    }
   );
 
   // Drag functionality state
@@ -100,44 +99,58 @@ export function ArcTimeline(props: ArcTimelineProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragStartRotation, setDragStartRotation] = useState(0);
-  const [hasDraggedSinceMouseDown, setHasDraggedSinceMouseDown] = useState(false);
+  const [hasDraggedSinceMouseDown, setHasDraggedSinceMouseDown] =
+    useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const DRAG_THRESHOLD = 5; // Minimum pixels to move before considering it a drag
   const DRAG_SENSITIVITY = 0.04; // How much rotation per pixel of drag (extra fine-tuned for precise control)
 
   // Handle drag start
-  const handleDragStart = useCallback((clientX: number) => {
-    setIsMouseDown(true);
-    setDragStartX(clientX);
-    setDragStartRotation(circleContainerRotateDeg);
-    setHasDraggedSinceMouseDown(false);
-  }, [circleContainerRotateDeg]);
+  const handleDragStart = useCallback(
+    (clientX: number) => {
+      setIsMouseDown(true);
+      setDragStartX(clientX);
+      setDragStartRotation(circleContainerRotateDeg);
+      setHasDraggedSinceMouseDown(false);
+    },
+    [circleContainerRotateDeg]
+  );
 
   // Handle drag move
-  const handleDragMove = useCallback((clientX: number) => {
-    if (!isMouseDown) return;
-    
-    const dragDelta = Math.abs(clientX - dragStartX);
-    
-    // Only start dragging if we've moved beyond the threshold
-    if (!isDragging && dragDelta > DRAG_THRESHOLD) {
-      setIsDragging(true);
-    }
-    
-    if (isDragging || dragDelta > DRAG_THRESHOLD) {
-      setHasDraggedSinceMouseDown(true);
-      const signedDragDelta = clientX - dragStartX;
-      // Convert horizontal movement to degrees with reduced sensitivity
-      const rotationDelta = signedDragDelta * DRAG_SENSITIVITY;
-      setCircleContainerRotateDeg(dragStartRotation + rotationDelta);
-    }
-  }, [isMouseDown, isDragging, dragStartX, dragStartRotation, DRAG_THRESHOLD, DRAG_SENSITIVITY]);
+  const handleDragMove = useCallback(
+    (clientX: number) => {
+      if (!isMouseDown) return;
+
+      const dragDelta = Math.abs(clientX - dragStartX);
+
+      // Only start dragging if we've moved beyond the threshold
+      if (!isDragging && dragDelta > DRAG_THRESHOLD) {
+        setIsDragging(true);
+      }
+
+      if (isDragging || dragDelta > DRAG_THRESHOLD) {
+        setHasDraggedSinceMouseDown(true);
+        const signedDragDelta = clientX - dragStartX;
+        // Convert horizontal movement to degrees with reduced sensitivity
+        const rotationDelta = signedDragDelta * DRAG_SENSITIVITY;
+        setCircleContainerRotateDeg(dragStartRotation + rotationDelta);
+      }
+    },
+    [
+      isMouseDown,
+      isDragging,
+      dragStartX,
+      dragStartRotation,
+      DRAG_THRESHOLD,
+      DRAG_SENSITIVITY,
+    ]
+  );
 
   // Calculate all step angles for snapping
   const getAllStepAngles = useCallback(() => {
     const stepAngles: number[] = [];
-    
+
     data.forEach((line, lineIndex) => {
       line.steps.forEach((step, stepIndex) => {
         const angle =
@@ -152,45 +165,58 @@ export function ArcTimeline(props: ArcTimelineProps) {
         stepAngles.push(-1 * angle); // Negative because we rotate in opposite direction
       });
     });
-    
+
     return stepAngles;
-  }, [data, angleBetweenMinorSteps, lineCountFillBetweenSteps, boundaryPlaceholderLinesCount]);
+  }, [
+    data,
+    angleBetweenMinorSteps,
+    lineCountFillBetweenSteps,
+    boundaryPlaceholderLinesCount,
+  ]);
 
   // Find the closest step angle to the current rotation
-  const findClosestStepAngle = useCallback((currentRotation: number) => {
-    const stepAngles = getAllStepAngles();
-    
-    let closestAngle = stepAngles[0];
-    let minDifference = Math.abs(currentRotation - closestAngle);
-    
-    for (const angle of stepAngles) {
-      const difference = Math.abs(currentRotation - angle);
-      if (difference < minDifference) {
-        minDifference = difference;
-        closestAngle = angle;
+  const findClosestStepAngle = useCallback(
+    (currentRotation: number) => {
+      const stepAngles = getAllStepAngles();
+
+      let closestAngle = stepAngles[0];
+      let minDifference = Math.abs(currentRotation - closestAngle);
+
+      for (const angle of stepAngles) {
+        const difference = Math.abs(currentRotation - angle);
+        if (difference < minDifference) {
+          minDifference = difference;
+          closestAngle = angle;
+        }
       }
-    }
-    
-    return closestAngle;
-  }, [getAllStepAngles]);
+
+      return closestAngle;
+    },
+    [getAllStepAngles]
+  );
 
   // Handle drag end
   const handleDragEnd = useCallback(() => {
     const wasActuallyDragging = isDragging && hasDraggedSinceMouseDown;
     setIsMouseDown(false);
     setIsDragging(false);
-    
+
     // If the user was actually dragging significantly, snap to the closest step
     if (wasActuallyDragging) {
       const closestAngle = findClosestStepAngle(circleContainerRotateDeg);
       setCircleContainerRotateDeg(closestAngle);
     }
-    
+
     // Reset drag flag after a short delay to prevent immediate clicks
     setTimeout(() => {
       setHasDraggedSinceMouseDown(false);
     }, 50);
-  }, [isDragging, hasDraggedSinceMouseDown, circleContainerRotateDeg, findClosestStepAngle]);
+  }, [
+    isDragging,
+    hasDraggedSinceMouseDown,
+    circleContainerRotateDeg,
+    findClosestStepAngle,
+  ]);
 
   // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -198,12 +224,15 @@ export function ArcTimeline(props: ArcTimelineProps) {
     handleDragStart(e.clientX);
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (isMouseDown) {
-      e.preventDefault();
-      handleDragMove(e.clientX);
-    }
-  }, [isMouseDown, handleDragMove]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isMouseDown) {
+        e.preventDefault();
+        handleDragMove(e.clientX);
+      }
+    },
+    [isMouseDown, handleDragMove]
+  );
 
   const handleMouseUp = useCallback(() => {
     handleDragEnd();
@@ -216,12 +245,15 @@ export function ArcTimeline(props: ArcTimelineProps) {
     }
   };
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (isMouseDown && e.touches.length === 1) {
-      e.preventDefault();
-      handleDragMove(e.touches[0].clientX);
-    }
-  }, [isMouseDown, handleDragMove]);
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (isMouseDown && e.touches.length === 1) {
+        e.preventDefault();
+        handleDragMove(e.touches[0].clientX);
+      }
+    },
+    [isMouseDown, handleDragMove]
+  );
 
   const handleTouchEnd = useCallback(() => {
     handleDragEnd();
@@ -237,7 +269,9 @@ export function ArcTimeline(props: ArcTimelineProps) {
     if (isMouseDown) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
-      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+      document.addEventListener('touchmove', handleGlobalTouchMove, {
+        passive: false,
+      });
       document.addEventListener('touchend', handleGlobalTouchEnd);
 
       return () => {
@@ -247,29 +281,37 @@ export function ArcTimeline(props: ArcTimelineProps) {
         document.removeEventListener('touchend', handleGlobalTouchEnd);
       };
     }
-  }, [isMouseDown, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+  }, [
+    isMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   return (
     <div
       {...restProps}
-      ref={containerRef}
       className={cn(
-        "relative h-[380px] w-full overflow-hidden select-none",
-        isDragging ? "cursor-grabbing" : "cursor-grab",
+        'relative h-[380px] w-full select-none overflow-hidden',
+        isDragging ? 'cursor-grabbing' : 'cursor-grab',
         className
       )}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      ref={containerRef}
     >
       <div
+        className={cn(
+          'absolute top-28 left-1/2 aspect-square origin-center rounded-full',
+          isDragging
+            ? 'transition-none'
+            : 'transition-all duration-500 ease-in-out'
+        )}
         style={{
           transform: `translateX(-50%) rotate(${circleContainerRotateDeg}deg)`,
           width: `${circleWidth}px`,
         }}
-        className={cn(
-          "absolute left-1/2 top-28 aspect-square origin-center rounded-full",
-          isDragging ? "transition-none" : "transition-all duration-500 ease-in-out"
-        )}
       >
         {data.map((line, lineIndex) => {
           return (
@@ -297,29 +339,25 @@ export function ArcTimeline(props: ArcTimelineProps) {
                     {/* placeholder lines before the first step */}
                     {isFirstStep && (
                       <PlaceholderLines
-                        isFirstStep={true}
-                        isLastStep={false}
                         angle={angle}
                         angleBetweenMinorSteps={angleBetweenMinorSteps}
-                        lineCountFillBetweenSteps={lineCountFillBetweenSteps}
                         boundaryPlaceholderLinesCount={
                           boundaryPlaceholderLinesCount
                         }
+                        circleContainerRotateDeg={circleContainerRotateDeg}
+                        circleWidth={circleWidth}
+                        isFirstStep={true}
+                        isLastStep={false}
+                        lineCountFillBetweenSteps={lineCountFillBetweenSteps}
                         lineIndex={lineIndex}
                         stepIndex={stepIndex}
-                        circleWidth={circleWidth}
-                        circleContainerRotateDeg={circleContainerRotateDeg}
                       />
                     )}
                     <div
                       className={cn(
-                        "absolute left-1/2 top-0 -translate-x-1/2 cursor-pointer transition-all duration-200",
-                        isActive ? "h-[120px] w-[2px]" : "h-16 w-[1.5px]",
+                        '-translate-x-1/2 absolute top-0 left-1/2 cursor-pointer transition-all duration-200',
+                        isActive ? 'h-[120px] w-[2px]' : 'h-16 w-[1.5px]'
                       )}
-                      style={{
-                        transformOrigin: `50% ${circleWidth / 2}px`,
-                        transform: `rotate(${angle}deg)`,
-                      }}
                       onClick={(e) => {
                         // Prevent clicks when user has dragged
                         if (hasDraggedSinceMouseDown) {
@@ -328,16 +366,20 @@ export function ArcTimeline(props: ArcTimelineProps) {
                         }
                         setCircleContainerRotateDeg(-1 * angle);
                       }}
+                      style={{
+                        transformOrigin: `50% ${circleWidth / 2}px`,
+                        transform: `rotate(${angle}deg)`,
+                      }}
                     >
                       <div
                         className={cn(
-                          "h-full w-full transition-colors duration-200",
+                          'h-full w-full transition-colors duration-200',
                           isActive
-                            ? "bg-[var(--step-line-active-color,#888888)] dark:bg-[var(--step-line-active-color,#9780ff)]"
-                            : "bg-[var(--step-line-inactive-color,#b1b1b1)] dark:bg-[var(--step-line-inactive-color,#737373)]",
+                            ? 'bg-[var(--step-line-active-color,#888888)] dark:bg-[var(--step-line-active-color,#9780ff)]'
+                            : 'bg-[var(--step-line-inactive-color,#b1b1b1)] dark:bg-[var(--step-line-inactive-color,#737373)]'
                         )}
                         style={{
-                          transformOrigin: "center top",
+                          transformOrigin: 'center top',
                           transform: `rotate(${
                             -1 * angle - circleContainerRotateDeg
                           }deg)`,
@@ -345,19 +387,19 @@ export function ArcTimeline(props: ArcTimelineProps) {
                       >
                         <div
                           className={cn(
-                            "absolute bottom-0 left-1/2 aspect-square -translate-x-1/2",
+                            '-translate-x-1/2 absolute bottom-0 left-1/2 aspect-square',
                             isActive
-                              ? "translate-y-[calc(100%_+_14px)] scale-[1.2] text-[var(--icon-active-color,#555555)] dark:text-[var(--icon-active-color,#d4d4d4)]"
-                              : "translate-y-[calc(100%_+_4px)] scale-100 text-[var(--icon-inactive-color,#a3a3a3)] dark:text-[var(--icon-inactive-color,#a3a3a3)]",
+                              ? 'translate-y-[calc(100%_+_14px)] scale-[1.2] text-[var(--icon-active-color,#555555)] dark:text-[var(--icon-active-color,#d4d4d4)]'
+                              : 'translate-y-[calc(100%_+_4px)] scale-100 text-[var(--icon-inactive-color,#a3a3a3)] dark:text-[var(--icon-inactive-color,#a3a3a3)]'
                           )}
                         >
                           {step.icon}
                         </div>
                         <p
                           className={cn(
-                            "absolute bottom-0 left-1/2 line-clamp-3 flex w-[240px] -translate-x-1/2 translate-y-[calc(100%_+_42px)] items-center justify-center text-center text-sm transition-opacity duration-300 ease-in",
-                            "text-[var(--description-color,#555555)] dark:text-[var(--description-color,#d4d4d4)]",
-                            isActive ? "opacity-100" : "opacity-0",
+                            '-translate-x-1/2 absolute bottom-0 left-1/2 line-clamp-3 flex w-[240px] translate-y-[calc(100%_+_42px)] items-center justify-center text-center text-sm transition-opacity duration-300 ease-in',
+                            'text-[var(--description-color,#555555)] dark:text-[var(--description-color,#d4d4d4)]',
+                            isActive ? 'opacity-100' : 'opacity-0'
                           )}
                         >
                           {step.content}
@@ -366,10 +408,10 @@ export function ArcTimeline(props: ArcTimelineProps) {
                       {stepIndex === 0 && (
                         <div
                           className={cn(
-                            "absolute left-1/2 top-0 z-10 -translate-x-1/2 translate-y-[calc(-100%-24px)] whitespace-nowrap",
+                            '-translate-x-1/2 absolute top-0 left-1/2 z-10 translate-y-[calc(-100%-24px)] whitespace-nowrap',
                             isActive
-                              ? "text-[var(--time-active-color,#555555)] dark:text-[var(--time-active-color,#d4d4d4)]"
-                              : "text-[var(--time-inactive-color,#a3a3a3)] dark:text-[var(--time-inactive-color,#a3a3a3)]",
+                              ? 'text-[var(--time-active-color,#555555)] dark:text-[var(--time-active-color,#d4d4d4)]'
+                              : 'text-[var(--time-inactive-color,#a3a3a3)] dark:text-[var(--time-inactive-color,#a3a3a3)]'
                           )}
                         >
                           {line.time}
@@ -379,18 +421,18 @@ export function ArcTimeline(props: ArcTimelineProps) {
 
                     {/* fill lines between steps, in the last step, fill the placeholder lines */}
                     <PlaceholderLines
-                      isFirstStep={false}
-                      isLastStep={isLastStep}
                       angle={angle}
                       angleBetweenMinorSteps={angleBetweenMinorSteps}
-                      lineCountFillBetweenSteps={lineCountFillBetweenSteps}
                       boundaryPlaceholderLinesCount={
                         boundaryPlaceholderLinesCount
                       }
+                      circleContainerRotateDeg={circleContainerRotateDeg}
+                      circleWidth={circleWidth}
+                      isFirstStep={false}
+                      isLastStep={isLastStep}
+                      lineCountFillBetweenSteps={lineCountFillBetweenSteps}
                       lineIndex={lineIndex}
                       stepIndex={stepIndex}
-                      circleWidth={circleWidth}
-                      circleContainerRotateDeg={circleContainerRotateDeg}
                     />
                   </div>
                 );
@@ -432,9 +474,8 @@ function PlaceholderLines(props: PlaceholderLinesProps) {
   const getAngle = (index: number) => {
     if (isFirstStep) {
       return index * angleBetweenMinorSteps;
-    } else {
-      return angle + (index + 1) * angleBetweenMinorSteps;
     }
+    return angle + (index + 1) * angleBetweenMinorSteps;
   };
 
   return (
@@ -442,15 +483,15 @@ function PlaceholderLines(props: PlaceholderLinesProps) {
       {Array(
         isLastStep || isFirstStep
           ? boundaryPlaceholderLinesCount
-          : lineCountFillBetweenSteps,
+          : lineCountFillBetweenSteps
       )
-        .fill("")
+        .fill('')
         .map((_, fillIndex) => {
           const fillAngle = getAngle(fillIndex);
           return (
             <div
+              className="-translate-x-1/2 absolute top-0 left-1/2 h-[34px] w-[1px]"
               key={`${lineIndex}-${stepIndex}-${fillIndex}`}
-              className="absolute left-1/2 top-0 h-[34px] w-[1px] -translate-x-1/2"
               style={{
                 transformOrigin: `50% ${circleWidth / 2}px`,
                 transform: `rotate(${fillAngle}deg)`,
@@ -459,12 +500,12 @@ function PlaceholderLines(props: PlaceholderLinesProps) {
               <div
                 className="h-full w-full bg-[var(--placeholder-line-color,#a1a1a1)] dark:bg-[var(--placeholder-line-color,#737373)]"
                 style={{
-                  transformOrigin: "center top",
+                  transformOrigin: 'center top',
                   transform: `rotate(${
                     -1 * fillAngle - circleContainerRotateDeg
                   }deg)`,
                 }}
-              ></div>
+              />
             </div>
           );
         })}

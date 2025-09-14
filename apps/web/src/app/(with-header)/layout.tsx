@@ -1,16 +1,14 @@
-import Header from "@/components/header";
+import Header from '@/components/header';
 
 export default function WithHeaderLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<div className="min-h-screen">
-			<Header />
-			{children}
-		</div>
-	);
+  return (
+    <div className="min-h-screen">
+      <Header />
+      {children}
+    </div>
+  );
 }
-
-
