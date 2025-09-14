@@ -605,7 +605,7 @@ class App {
     
     for (const media of this.medias) {
       // Calculate the screen position of this media item
-      const mediaScreenX = centerX - media.plane.position.x * (this.screen.width / this.viewport.width);
+      const mediaScreenX = centerX + media.plane.position.x * (this.screen.width / this.viewport.width);
       const distance = Math.abs(mediaScreenX - x);
       
       if (distance < closestDistance && distance < media.width * (this.screen.width / this.viewport.width) / 2) {
