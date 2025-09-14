@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { ComponentPropsWithoutRef, ReactNode, useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 export interface ArcTimelineItem {
   time: ReactNode;
@@ -94,17 +95,181 @@ export function ArcTimeline(props: ArcTimelineProps) {
     },
   );
 
+  // Drag functionality state
+  const [isDragging, setIsDragging] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragStartRotation, setDragStartRotation] = useState(0);
+  const [hasDraggedSinceMouseDown, setHasDraggedSinceMouseDown] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const DRAG_THRESHOLD = 5; // Minimum pixels to move before considering it a drag
+  const DRAG_SENSITIVITY = 0.08; // How much rotation per pixel of drag (fine-tuned for smooth control)
+
+  // Handle drag start
+  const handleDragStart = useCallback((clientX: number) => {
+    setIsMouseDown(true);
+    setDragStartX(clientX);
+    setDragStartRotation(circleContainerRotateDeg);
+    setHasDraggedSinceMouseDown(false);
+  }, [circleContainerRotateDeg]);
+
+  // Handle drag move
+  const handleDragMove = useCallback((clientX: number) => {
+    if (!isMouseDown) return;
+    
+    const dragDelta = Math.abs(clientX - dragStartX);
+    
+    // Only start dragging if we've moved beyond the threshold
+    if (!isDragging && dragDelta > DRAG_THRESHOLD) {
+      setIsDragging(true);
+    }
+    
+    if (isDragging || dragDelta > DRAG_THRESHOLD) {
+      setHasDraggedSinceMouseDown(true);
+      const signedDragDelta = clientX - dragStartX;
+      // Convert horizontal movement to degrees with reduced sensitivity
+      const rotationDelta = signedDragDelta * DRAG_SENSITIVITY;
+      setCircleContainerRotateDeg(dragStartRotation + rotationDelta);
+    }
+  }, [isMouseDown, isDragging, dragStartX, dragStartRotation, DRAG_THRESHOLD, DRAG_SENSITIVITY]);
+
+  // Calculate all step angles for snapping
+  const getAllStepAngles = useCallback(() => {
+    const stepAngles: number[] = [];
+    
+    data.forEach((line, lineIndex) => {
+      line.steps.forEach((step, stepIndex) => {
+        const angle =
+          angleBetweenMinorSteps *
+            (lineCountFillBetweenSteps + 1) *
+            (data
+              .slice(0, lineIndex)
+              .map((item) => item.steps.length)
+              .reduce((prev, current) => prev + current, 0) +
+              stepIndex) +
+          angleBetweenMinorSteps * boundaryPlaceholderLinesCount;
+        stepAngles.push(-1 * angle); // Negative because we rotate in opposite direction
+      });
+    });
+    
+    return stepAngles;
+  }, [data, angleBetweenMinorSteps, lineCountFillBetweenSteps, boundaryPlaceholderLinesCount]);
+
+  // Find the closest step angle to the current rotation
+  const findClosestStepAngle = useCallback((currentRotation: number) => {
+    const stepAngles = getAllStepAngles();
+    
+    let closestAngle = stepAngles[0];
+    let minDifference = Math.abs(currentRotation - closestAngle);
+    
+    for (const angle of stepAngles) {
+      const difference = Math.abs(currentRotation - angle);
+      if (difference < minDifference) {
+        minDifference = difference;
+        closestAngle = angle;
+      }
+    }
+    
+    return closestAngle;
+  }, [getAllStepAngles]);
+
+  // Handle drag end
+  const handleDragEnd = useCallback(() => {
+    const wasActuallyDragging = isDragging && hasDraggedSinceMouseDown;
+    setIsMouseDown(false);
+    setIsDragging(false);
+    
+    // If the user was actually dragging significantly, snap to the closest step
+    if (wasActuallyDragging) {
+      const closestAngle = findClosestStepAngle(circleContainerRotateDeg);
+      setCircleContainerRotateDeg(closestAngle);
+    }
+    
+    // Reset drag flag after a short delay to prevent immediate clicks
+    setTimeout(() => {
+      setHasDraggedSinceMouseDown(false);
+    }, 50);
+  }, [isDragging, hasDraggedSinceMouseDown, circleContainerRotateDeg, findClosestStepAngle]);
+
+  // Mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleDragStart(e.clientX);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isMouseDown) {
+      e.preventDefault();
+      handleDragMove(e.clientX);
+    }
+  }, [isMouseDown, handleDragMove]);
+
+  const handleMouseUp = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      handleDragStart(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (isMouseDown && e.touches.length === 1) {
+      e.preventDefault();
+      handleDragMove(e.touches[0].clientX);
+    }
+  }, [isMouseDown, handleDragMove]);
+
+  const handleTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  // Add global event listeners for drag events
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => handleMouseMove(e);
+    const handleGlobalMouseUp = () => handleMouseUp();
+    const handleGlobalTouchMove = (e: TouchEvent) => handleTouchMove(e);
+    const handleGlobalTouchEnd = () => handleTouchEnd();
+
+    if (isMouseDown) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+      document.addEventListener('touchend', handleGlobalTouchEnd);
+
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+        document.removeEventListener('touchmove', handleGlobalTouchMove);
+        document.removeEventListener('touchend', handleGlobalTouchEnd);
+      };
+    }
+  }, [isMouseDown, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+
   return (
     <div
       {...restProps}
-      className={cn("relative h-[380px] w-full overflow-hidden", className)}
+      ref={containerRef}
+      className={cn(
+        "relative h-[380px] w-full overflow-hidden select-none",
+        isDragging ? "cursor-grabbing" : "cursor-grab",
+        className
+      )}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       <div
         style={{
           transform: `translateX(-50%) rotate(${circleContainerRotateDeg}deg)`,
           width: `${circleWidth}px`,
         }}
-        className="absolute left-1/2 top-28 aspect-square origin-center rounded-full transition-all duration-500 ease-in-out"
+        className={cn(
+          "absolute left-1/2 top-28 aspect-square origin-center rounded-full",
+          isDragging ? "transition-none" : "transition-all duration-500 ease-in-out"
+        )}
       >
         {data.map((line, lineIndex) => {
           return (
@@ -155,7 +320,12 @@ export function ArcTimeline(props: ArcTimelineProps) {
                         transformOrigin: `50% ${circleWidth / 2}px`,
                         transform: `rotate(${angle}deg)`,
                       }}
-                      onClick={() => {
+                      onClick={(e) => {
+                        // Prevent clicks when user has dragged
+                        if (hasDraggedSinceMouseDown) {
+                          e.preventDefault();
+                          return;
+                        }
                         setCircleContainerRotateDeg(-1 * angle);
                       }}
                     >
