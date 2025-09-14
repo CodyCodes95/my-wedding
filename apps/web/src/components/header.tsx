@@ -30,19 +30,17 @@ export default function Header() {
 					})}
 				</nav>
 
-				{/* Center Logo */}
-				<div className="flex-shrink-0">
-					<Image
-						src="/outline-no-bg.png"
-						alt="Wedding Logo"
-						width={140}
-						height={10}
-						className="object-contain"
-					/>
-				</div>
-
-				{/* Right RSVP Button */}
-				<div>
+				{/* Right Logo + RSVP Button */}
+				<div className="flex items-center gap-4">
+					<div className="flex-shrink-0">
+						<Image
+							src="/outline-no-bg.png"
+							alt="Wedding Logo"
+							width={140}
+							height={10}
+							className="object-contain"
+						/>
+					</div>
 					<Link href="/rsvp">
 						<Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2 text-sm font-medium">
 							RSVP

@@ -5,39 +5,49 @@ import { cn } from "@/lib/utils";
 
 export default function Home() {
 	return (
-		<main className="container mx-auto max-w-5xl px-4 py-10">
-			<section className="grid items-center gap-8 md:grid-cols-[1fr_auto_1fr]">
-				<div className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-xl">
+		<main className="relative h-screen w-full overflow-hidden">
+			{/* Split Image Layout */}
+			<div className="flex h-full">
+				{/* Ash - Left Half */}
+				<div className="relative w-1/2">
 					<Image
 						src="/ash.jpg"
 						alt="Ash"
 						fill
 						priority
-						sizes="(max-width: 768px) 50vw, 25vw"
+						sizes="50vw"
 						className="object-cover"
 					/>
 				</div>
-				<div className="flex flex-col items-center gap-4">
-					<h1 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">
-						Ashley & Cody
-					</h1>
-					<p className="text-center text-muted-foreground">
-						We're so glad you're here.
-					</p>
-					<Link href="/details" className={cn(buttonVariants({ size: "lg" }))}>
-						Enter
-					</Link>
-				</div>
-				<div className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-xl">
+				
+				{/* Cody - Right Half */}
+				<div className="relative w-1/2">
 					<Image
 						src="/cody.jpg"
 						alt="Cody"
 						fill
-						sizes="(max-width: 768px) 50vw, 25vw"
+						priority
+						sizes="50vw"
 						className="object-cover"
 					/>
 				</div>
-			</section>
+			</div>
+
+			{/* Centered Overlay Content */}
+			<div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
+				<h1 className="text-center text-5xl font-bold tracking-tight text-white drop-shadow-lg sm:text-6xl lg:text-7xl">
+					We're getting<br />
+					married!
+				</h1>
+				<div className="mt-8">
+					<Link 
+						href="/details" 
+						className={cn(buttonVariants({ size: "lg" }), "bg-white text-black hover:bg-white/90")}
+					>
+						Enter
+					</Link>
+				</div>
+			</div>
 		</main>
 	);
 }
