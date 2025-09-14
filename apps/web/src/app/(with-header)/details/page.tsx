@@ -1,8 +1,101 @@
 import Image from "next/image";
 import SectionDivider from "@/components/section-divider";
 import CircularGallery from "@/components/CircularGallery";
+import { ArcTimeline, type ArcTimelineItem } from "@/components/magicui/arc-timeline";
+import {
+	Heart,
+	Home,
+	Rocket,
+	Star,
+	Globe,
+	Calendar,
+	Camera,
+	Gift,
+} from "lucide-react";
 
 export const dynamic = "force-static";
+
+const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
+	{
+		time: "2020",
+		steps: [
+			{
+				icon: <Heart width={20} height={20} />,
+				content: "First met through mutual friends at a coffee shop downtown - love at first sight!",
+			},
+		],
+	},
+	{
+		time: "2021",
+		steps: [
+			{
+				icon: <Camera width={20} height={20} />,
+				content: "Our first official date - a romantic dinner followed by stargazing in the park.",
+			},
+			{
+				icon: <Globe width={20} height={20} />,
+				content: "First vacation together to the mountains - discovered our shared love for adventure.",
+			},
+		],
+	},
+	{
+		time: "2022",
+		steps: [
+			{
+				icon: <Home width={20} height={20} />,
+				content: "Moved in together and adopted our first pet - creating our little family.",
+			},
+			{
+				icon: <Star width={20} height={20} />,
+				content: "Said 'I love you' for the first time during a sunset walk on the beach.",
+			},
+		],
+	},
+	{
+		time: "2023",
+		steps: [
+			{
+				icon: <Rocket width={20} height={20} />,
+				content: "Started planning our future together and began looking at rings.",
+			},
+			{
+				icon: <Gift width={20} height={20} />,
+				content: "Celebrated our third anniversary with a surprise weekend getaway.",
+			},
+		],
+	},
+	{
+		time: "2024",
+		steps: [
+			{
+				icon: <Heart width={20} height={20} />,
+				content: "The proposal! A magical moment at our favorite spot where we first met.",
+			},
+			{
+				icon: <Calendar width={20} height={20} />,
+				content: "Started planning our dream wedding and chose October 26, 2026 as our special date.",
+			},
+		],
+	},
+	{
+		time: "2025",
+		steps: [
+			{
+				icon: <Globe width={20} height={20} />,
+				content: "Engaged bliss - traveling and making memories while planning our big day.",
+			},
+		],
+	},
+	{
+		time: "2026",
+		steps: [
+			{
+				icon: <Star width={20} height={20} />,
+				content: "Our wedding day - celebrating our love story with family and friends!",
+			},
+		],
+	},
+];
 
 export default function DetailsPage() {
 	return (
@@ -50,35 +143,32 @@ export default function DetailsPage() {
 
 			<SectionDivider />
 
-			{/* About Us Section */}
+			{/* Our Story Timeline Section */}
 			<section id="about" className="py-16">
-				<div className="container mx-auto max-w-4xl px-4">
-					<h2 className="text-4xl font-light text-center mb-8 text-primary">About Us</h2>
-					<div className="grid md:grid-cols-2 gap-8">
-						<div className="text-center">
-							<h3 className="text-2xl font-medium mb-4">Cody</h3>
-							<p className="text-muted-foreground">
-								Tell us about Cody here - his interests, background, 
-								and what makes him special. This is where we'll share 
-								his story and what he brings to this beautiful partnership.
-							</p>
-						</div>
-						<div className="text-center">
-							<h3 className="text-2xl font-medium mb-4">Ash</h3>
-							<p className="text-muted-foreground">
-								Tell us about Ash here - her interests, background,
-								and what makes her special. This is where we'll share
-								her story and what she brings to this beautiful partnership.
-							</p>
-						</div>
-					</div>
-					<div className="mt-12 text-center max-w-2xl mx-auto">
-						<h3 className="text-2xl font-medium mb-4">Our Story</h3>
-						<p className="text-muted-foreground">
-							Here's where we'll share the story of how Cody and Ash met,
-							fell in love, and decided to spend their lives together.
-							The journey that brought them to this special day.
-						</p>
+				<div className="container mx-auto max-w-6xl px-4">
+					<h2 className="text-4xl font-light text-center mb-12 text-primary">Our Story</h2>
+
+					<div className="relative" style={{ height: '800px' }}>
+						<ArcTimeline
+							className={
+								"[--step-line-active-color:oklch(0.4365_0.1044_156.7556)] dark:[--step-line-active-color:oklch(0.4365_0.1044_156.7556)]" +
+								" [--step-line-inactive-color:#b1b1b1] dark:[--step-line-inactive-color:#737373]" +
+								" [--placeholder-line-color:#a1a1a1] dark:[--placeholder-line-color:#737373]" +
+								" [--icon-active-color:oklch(0.4365_0.1044_156.7556)] dark:[--icon-active-color:oklch(0.4365_0.1044_156.7556)]" +
+								" [--icon-inactive-color:#a3a3a3] dark:[--icon-inactive-color:#a3a3a3]" +
+								" [--time-active-color:oklch(0.4365_0.1044_156.7556)] dark:[--time-active-color:oklch(0.4365_0.1044_156.7556)]" +
+								" [--time-inactive-color:#a3a3a3] dark:[--time-inactive-color:#a3a3a3]" +
+								" [--description-color:#555555] dark:[--description-color:#d4d4d4]"
+							}
+							data={RELATIONSHIP_TIMELINE}
+							defaultActiveStep={{ time: "2026", stepIndex: 0 }}
+							arcConfig={{
+								circleWidth: 4000,
+								angleBetweenMinorSteps: 0.5,
+								lineCountFillBetweenSteps: 6,
+								boundaryPlaceholderLinesCount: 40,
+							}}
+						/>
 					</div>
 				</div>
 			</section>

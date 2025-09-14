@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 export default function Header() {
 	const links = [
 		{ to: "#details", label: "Details" },
-		{ to: "#about", label: "About Us" },
+		{ to: "#about", label: "Our Story" },
 		{ to: "#travel", label: "Travel" },
 		{ to: "#accommodation", label: "Accommodation" },
 		{ to: "#faqs", label: "FAQs" },
