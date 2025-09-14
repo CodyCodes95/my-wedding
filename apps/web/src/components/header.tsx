@@ -5,11 +5,11 @@ import { Button } from "./ui/button";
 
 export default function Header() {
 	const links = [
-		{ to: "/venue", label: "Venue & Accommodations" },
-		{ to: "/travel", label: "Travel" },
-		{ to: "/schedule", label: "Schedule" },
-		{ to: "/faqs", label: "FAQs" },
-		{ to: "/registry", label: "Registry" },
+		{ to: "#details", label: "Details" },
+		{ to: "#about", label: "About Us" },
+		{ to: "#travel", label: "Travel" },
+		{ to: "#accommodation", label: "Accommodation" },
+		{ to: "#faqs", label: "FAQs" },
 	];
 
 	return (
@@ -41,7 +41,7 @@ export default function Header() {
 							className="object-contain"
 						/>
 					</div>
-					<Link href="/rsvp">
+					<Link href="#rsvp">
 						<Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2 text-sm font-medium">
 							RSVP
 						</Button>
