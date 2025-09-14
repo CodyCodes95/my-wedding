@@ -153,6 +153,8 @@ type Hotel = {
 };
 
 // Getting there data
+type StepId = 1 | 2 | 3;
+
 type AirportOption = {
   code: string;
   name: string;
@@ -240,39 +242,19 @@ const FROM_LJU: TransportOption[] = [
   },
 ];
 
-const FROM_LJUBLJANA_CITY: TransportOption[] = [
-  {
-    mode: 'Bus (Ljubljana → Bled)',
-    duration: '60–80 min',
-    cost: '≈ €6–€10 pp',
-    notes: 'Frequent departures from the main bus station.',
-  },
-  {
-    mode: 'Train (Ljubljana → Lesce-Bled) + local bus/taxi',
-    duration: '60–90 min (+10–15 min transfer)',
-    cost: '≈ €6–€12 pp (+€10–€15 taxi)',
-    notes: 'Lesce-Bled is ~4 km from Bled center.',
-  },
-  {
-    mode: 'Taxi / ride-hail',
-    duration: '40–60 min',
-    cost: '≈ €60–€90 per car',
-    notes: 'Most convenient with luggage or late arrivals.',
-  },
-  {
-    mode: 'Car rental',
-    duration: '40–50 min drive',
-    cost: 'Varies',
-    notes: 'Fastest and most flexible for exploring the area.',
-  },
+// Removed city-center table per request
+
+const HUBS: { code: string; city: string; country: string }[] = [
+  { code: 'VIE', city: 'Vienna', country: 'Austria' },
+  { code: 'MUC', city: 'Munich', country: 'Germany' },
+  { code: 'FRA', city: 'Frankfurt', country: 'Germany' },
+  { code: 'VCE', city: 'Venice', country: 'Italy' },
 ];
 
-const TIPS: string[] = [
-  'Times and prices are approximate—always check current schedules and fares.',
-  'Slovenian motorways require a vignette; Austrian motorways require a separate vignette.',
-  'If driving via the Karawanks tunnel (A/Si border), there may be an additional toll.',
-  'Bled is compact—once in town, most places are walkable; taxis are available.',
-  'Card payments are widely accepted; carry a little cash for small local buses.',
+const SOURCES: { label: string; url: string }[] = [
+  { label: 'Bled.si – How to get to Bled', url: 'https://www.bled.si/en/information/how-to-get-to-bled/20190920131934/by-plane/' },
+  { label: 'Ljubljana Airport (LJU)', url: 'https://www.lju-airport.si/en' },
+  { label: 'Luxury-Travel.info – Airport transfer options', url: 'https://www.luxury-travel.info/ljubljana-to-bled/' },
 ];
 
 const HOTELS: Hotel[] = [
@@ -353,7 +335,7 @@ const HOTELS: Hotel[] = [
 
 export default function DetailsPage() {
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
-  const [activeTab, setActiveTab] = useState<'airports' | 'lju' | 'ljubljana' | 'driving' | 'tips'>('airports');
+  const [activeStep, setActiveStep] = useState<StepId>(1);
 
   const handleHotelSelect = useCallback((index: number) => {
     setSelectedHotel(HOTELS[index % HOTELS.length]);
@@ -480,193 +462,142 @@ export default function DetailsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-8 md:grid-cols-[260px_1fr]">
-                {/* Vertical tabs */}
-                <div
-                  aria-orientation="vertical"
-                  className="flex flex-col gap-2"
-                  role="tablist"
-                >
-                  <Button
-                    aria-controls="tab-airports"
-                    aria-selected={activeTab === 'airports'}
-                    className={activeTab === 'airports' ? '' : 'bg-background text-foreground hover:bg-accent'}
-                    onClick={() => setActiveTab('airports')}
-                    role="tab"
-                    type="button"
-                    variant={activeTab === 'airports' ? 'default' : 'outline'}
-                  >
-                    Airports
-                  </Button>
-                  <Button
-                    aria-controls="tab-lju"
-                    aria-selected={activeTab === 'lju'}
-                    className={activeTab === 'lju' ? '' : 'bg-background text-foreground hover:bg-accent'}
-                    onClick={() => setActiveTab('lju')}
-                    role="tab"
-                    type="button"
-                    variant={activeTab === 'lju' ? 'default' : 'outline'}
-                  >
-                    From Ljubljana Airport (LJU)
-                  </Button>
-                  <Button
-                    aria-controls="tab-ljubljana"
-                    aria-selected={activeTab === 'ljubljana'}
-                    className={activeTab === 'ljubljana' ? '' : 'bg-background text-foreground hover:bg-accent'}
-                    onClick={() => setActiveTab('ljubljana')}
-                    role="tab"
-                    type="button"
-                    variant={activeTab === 'ljubljana' ? 'default' : 'outline'}
-                  >
-                    From Ljubljana (city)
-                  </Button>
-                  <Button
-                    aria-controls="tab-driving"
-                    aria-selected={activeTab === 'driving'}
-                    className={activeTab === 'driving' ? '' : 'bg-background text-foreground hover:bg-accent'}
-                    onClick={() => setActiveTab('driving')}
-                    role="tab"
-                    type="button"
-                    variant={activeTab === 'driving' ? 'default' : 'outline'}
-                  >
-                    Driving & car rental
-                  </Button>
-                  <Button
-                    aria-controls="tab-tips"
-                    aria-selected={activeTab === 'tips'}
-                    className={activeTab === 'tips' ? '' : 'bg-background text-foreground hover:bg-accent'}
-                    onClick={() => setActiveTab('tips')}
-                    role="tab"
-                    type="button"
-                    variant={activeTab === 'tips' ? 'default' : 'outline'}
-                  >
-                    Tips
-                  </Button>
+                {/* Stepper */}
+                <div className="relative">
+                  <div className="absolute left-4 top-6 bottom-6 hidden border-l md:block" />
+                  <ol className="space-y-3" role="list">
+                    {[1, 2, 3].map((step) => {
+                      const label = step === 1 ? 'Get to Europe' : step === 2 ? 'Fly to Ljubljana (LJU)' : 'Get to Bled';
+                      const selected = activeStep === step;
+                      return (
+                        <li className="relative" key={step}>
+                          <button
+                            aria-current={selected ? 'step' : undefined}
+                            className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${selected ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-accent'}`}
+                            onClick={() => setActiveStep(step as StepId)}
+                            type="button"
+                          >
+                            <span className={`grid size-7 place-items-center rounded-full ${selected ? 'bg-primary-foreground text-primary' : 'bg-muted text-foreground'}`}>
+                              {step}
+                            </span>
+                            <span className="font-medium">{label}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
                 </div>
 
-                {/* Panels */}
+                {/* Step content */}
                 <div>
-                  {activeTab === 'airports' && (
-                    <div aria-labelledby="tab-airports" id="tab-airports" role="tabpanel">
-                      <h3 className="mb-4 font-medium text-2xl">Recommended airports</h3>
-                      <div className="overflow-x-auto">
-                        <table className="w-full table-fixed border-collapse text-left">
-                          <caption className="mb-3 text-muted-foreground text-sm">
-                            Distances and times are approximate and depend on traffic and route.
-                          </caption>
-                          <thead>
-                            <tr className="border-b">
-                              <th className="py-2 pr-4" scope="col">Airport</th>
-                              <th className="py-2 pr-4" scope="col">Country</th>
-                              <th className="py-2 pr-4" scope="col">Distance</th>
-                              <th className="py-2 pr-4" scope="col">Drive time</th>
-                              <th className="py-2 pr-4" scope="col">Notes</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {AIRPORTS.map((a) => (
-                              <tr className="border-b last:border-0" key={a.code}>
-                                <td className="py-3 pr-4 font-medium">{a.code} — {a.name}</td>
-                                <td className="py-3 pr-4">{a.country}</td>
-                                <td className="py-3 pr-4">{a.distanceKm} km</td>
-                                <td className="py-3 pr-4">{Math.round(a.driveTimeMin / 5) * 5} min</td>
-                                <td className="py-3 pr-4 text-muted-foreground">{a.notes}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                  {activeStep === 1 && (
+                    <div>
+                      <h3 className="mb-4 font-medium text-2xl">Step 1 – Get to Europe</h3>
+                      <p className="mb-4 text-muted-foreground">
+                        There are no direct flights from Australia to Bled (Bled doesn’t
+                        have a major airport). Most guests will first fly into a
+                        large European hub and connect onward.
+                      </p>
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {HUBS.map((h) => (
+                          <span
+                            className="rounded-full border px-3 py-1 text-sm"
+                            key={h.code}
+                          >
+                            {h.city} ({h.code}) • {h.country}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground">
+                        Choose the routing with the best schedule and fare. If you plan a
+                        European stopover, consider arriving a day early to reduce
+                        connection stress and jet lag.
+                      </p>
+                    </div>
+                  )}
+
+                  {activeStep === 2 && (
+                    <div>
+                      <h3 className="mb-4 font-medium text-2xl">Step 2 – Fly to Ljubljana Jože Pučnik Airport (LJU)</h3>
+                      <p className="mb-3 text-muted-foreground">
+                        LJU is Slovenia’s main airport and the closest to Bled (~36 km / ~35 min drive).
+                        When booking, try to match connections with comfortable layovers—especially after
+                        a long-haul sector.
+                      </p>
+                      <div className="rounded-lg bg-primary/5 p-4 text-sm text-muted-foreground">
+                        Tip: If LJU fares are high, look at nearby airports like Vienna (VIE), Munich (MUC),
+                        Venice (VCE) or Zagreb (ZAG) and continue to Bled by train/bus/car.
                       </div>
                     </div>
                   )}
 
-                  {activeTab === 'lju' && (
-                    <div aria-labelledby="tab-lju" id="tab-lju" role="tabpanel">
-                      <h3 className="mb-4 font-medium text-2xl">From Ljubljana Airport (LJU)</h3>
-                      <div className="overflow-x-auto">
-                        <table className="w-full table-fixed border-collapse text-left">
-                          <thead>
-                            <tr className="border-b">
-                              <th className="py-2 pr-4" scope="col">Mode</th>
-                              <th className="py-2 pr-4" scope="col">Duration</th>
-                              <th className="py-2 pr-4" scope="col">Typical cost</th>
-                              <th className="py-2 pr-4" scope="col">Notes</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {FROM_LJU.map((o, idx) => (
-                              <tr className="border-b last:border-0" key={idx}>
-                                <td className="py-3 pr-4 font-medium">{o.mode}</td>
-                                <td className="py-3 pr-4">{o.duration}</td>
-                                <td className="py-3 pr-4">{o.cost}</td>
-                                <td className="py-3 pr-4 text-muted-foreground">{o.notes}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
+                  {activeStep === 3 && (
+                    <div>
+                      <h3 className="mb-4 font-medium text-2xl">Step 3 – Get to Bled</h3>
+                      <p className="mb-6 text-muted-foreground">
+                        Once you’re in Slovenia or elsewhere in Europe, these are the most
+                        popular ways to reach Bled.
+                      </p>
 
-                  {activeTab === 'ljubljana' && (
-                    <div aria-labelledby="tab-ljubljana" id="tab-ljubljana" role="tabpanel">
-                      <h3 className="mb-4 font-medium text-2xl">From Ljubljana (city)</h3>
-                      <div className="overflow-x-auto">
-                        <table className="w-full table-fixed border-collapse text-left">
-                          <thead>
-                            <tr className="border-b">
-                              <th className="py-2 pr-4" scope="col">Mode</th>
-                              <th className="py-2 pr-4" scope="col">Duration</th>
-                              <th className="py-2 pr-4" scope="col">Typical cost</th>
-                              <th className="py-2 pr-4" scope="col">Notes</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {FROM_LJUBLJANA_CITY.map((o, idx) => (
-                              <tr className="border-b last:border-0" key={idx}>
-                                <td className="py-3 pr-4 font-medium">{o.mode}</td>
-                                <td className="py-3 pr-4">{o.duration}</td>
-                                <td className="py-3 pr-4">{o.cost}</td>
-                                <td className="py-3 pr-4 text-muted-foreground">{o.notes}</td>
+                      <div className="mb-8">
+                        <h4 className="mb-2 font-medium">From Ljubljana Airport (LJU) → Bled</h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full table-fixed border-collapse text-left">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="py-2 pr-4" scope="col">Travel mode</th>
+                                <th className="py-2 pr-4" scope="col">Approx time</th>
+                                <th className="py-2 pr-4" scope="col">Notes / cost-efficiency</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {FROM_LJU.map((o, idx) => (
+                                <tr className="border-b last:border-0" key={idx}>
+                                  <td className="py-3 pr-4 font-medium">{o.mode}</td>
+                                  <td className="py-3 pr-4">{o.duration}</td>
+                                  <td className="py-3 pr-4 text-muted-foreground">{o.notes} {o.cost ? `• ${o.cost}` : ''}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
-                  )}
 
-                  {activeTab === 'driving' && (
-                    <div aria-labelledby="tab-driving" id="tab-driving" role="tabpanel">
-                      <h3 className="mb-4 font-medium text-2xl">Driving & car rental</h3>
-                      <div className="space-y-3 text-muted-foreground">
-                        <p>
-                          Bled is about 35 minutes from LJU via the A2 motorway. If
-                          you plan to explore Slovenia (Triglav National Park,
-                          Soča Valley, Ljubljana), renting a car is very convenient.
-                        </p>
-                        <ul className="list-disc pl-5">
-                          <li>Motorway vignettes are required in Slovenia (and Austria).</li>
-                          <li>If coming from Austria, there may be an extra Karawanks tunnel toll.</li>
-                          <li>Parking is available around Bled; some areas are paid/limited.</li>
+                      {/* Removed Ljubljana city table per request */}
+
+                      <div className="rounded-lg bg-muted/40 p-4 text-muted-foreground text-sm">
+                        <p className="mb-2 font-medium">Sources & further reading</p>
+                        <ul className="list-disc space-y-1 pl-5">
+                          {SOURCES.map((s) => (
+                            <li key={s.url}>
+                              <a className="underline underline-offset-4" href={s.url} rel="noopener noreferrer" target="_blank">
+                                {s.label}
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                     </div>
                   )}
-
-                  {activeTab === 'tips' && (
-                    <div aria-labelledby="tab-tips" id="tab-tips" role="tabpanel">
-                      <h3 className="mb-4 font-medium text-2xl">Helpful tips</h3>
-                      <ul className="grid gap-2 text-muted-foreground">
-                        {TIPS.map((t, i) => (
-                          <li className="flex items-start gap-3" key={i}>
-                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                            <span>{t}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Our recommendation */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Our recommendation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                If you can turn this trip into a longer European holiday, do it.
+                Fly into a city you&apos;re excited to visit—Switzerland, Germany,
+                Austria, Italy, Croatia or Czechia are all nearby—spend as long
+                as you like exploring, then rent a car and drive to Bled. From
+                most neighboring regions it&apos;s only a few hours by road, and the
+                journey is beautiful.
+              </p>
             </CardContent>
           </Card>
         </div>
