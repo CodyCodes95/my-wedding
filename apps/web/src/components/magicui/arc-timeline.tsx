@@ -104,7 +104,7 @@ export function ArcTimeline(props: ArcTimelineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const DRAG_THRESHOLD = 5; // Minimum pixels to move before considering it a drag
-  const DRAG_SENSITIVITY = 0.08; // How much rotation per pixel of drag (fine-tuned for smooth control)
+  const DRAG_SENSITIVITY = 0.04; // How much rotation per pixel of drag (extra fine-tuned for precise control)
 
   // Handle drag start
   const handleDragStart = useCallback((clientX: number) => {
