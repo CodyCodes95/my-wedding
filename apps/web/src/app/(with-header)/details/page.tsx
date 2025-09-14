@@ -290,7 +290,7 @@ export default function DetailsPage() {
             Our Story
           </h2>
 
-          <div className="relative" style={{ height: '800px' }}>
+          <div className="relative" >
             <ArcTimeline
               arcConfig={{
                 circleWidth: 4000,
