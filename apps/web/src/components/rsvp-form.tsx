@@ -94,18 +94,20 @@ export default function RsvpForm() {
           onValueChange={(v) => setAttending(v as 'yes' | 'no')}
           value={attending}
         >
-          <div className="flex items-center gap-3 rounded-md border border-input bg-white p-3 transition-colors hover:bg-accent/40">
+          <Label
+            className="flex cursor-pointer items-center gap-3 rounded-md border border-input bg-white p-3 transition-colors hover:bg-accent/40"
+            htmlFor="attend-yes"
+          >
             <RadioGroupItem id="attend-yes" required value="yes" />
-            <Label className="cursor-pointer" htmlFor="attend-yes">
-              <span className="text-sm">Yes, I will be there</span>
-            </Label>
-          </div>
-          <div className="flex items-center gap-3 rounded-md border border-input bg-white p-3 transition-colors hover:bg-accent/40">
+            <span className="text-sm">Yes, I will be there</span>
+          </Label>
+          <Label
+            className="flex cursor-pointer items-center gap-3 rounded-md border border-input bg-white p-3 transition-colors hover:bg-accent/40"
+            htmlFor="attend-no"
+          >
             <RadioGroupItem id="attend-no" value="no" />
-            <Label className="cursor-pointer" htmlFor="attend-no">
-              <span className="text-sm">No, I can't make it</span>
-            </Label>
-          </div>
+            <span className="text-sm">No, I can't make it</span>
+          </Label>
         </RadioGroup>
       </fieldset>
 

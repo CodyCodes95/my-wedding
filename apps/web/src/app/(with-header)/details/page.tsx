@@ -432,7 +432,7 @@ export default function DetailsPage() {
 
       <div className="relative w-full" style={{ height: '80vh' }}>
         <DomeGallery
-          fit={0.7}
+          fit={2}
           grayscale={false}
           imageBorderRadius="15px"
           images={OUR_PHOTOS}
