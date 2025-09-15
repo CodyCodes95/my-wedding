@@ -13,6 +13,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const rsvpSchema = z
   .object({
+    fullName: z
+      .string()
+      .trim()
+      .min(1, 'Please provide your full name.')
+      .max(100, 'Please keep the name under 100 characters.'),
     attending: z.enum(['yes', 'no'], {
       message: 'Please select if you are attending.',
     }),
@@ -45,6 +50,7 @@ const rsvpSchema = z
 
 export default function RsvpForm() {
   const submitRsvp = useMutation(api.rsvps.submit);
+  const [fullName, setFullName] = useState('');
   const [attending, setAttending] = useState<'yes' | 'no' | ''>('');
   const [plusOne, setPlusOne] = useState(false);
   const [plusOneName, setPlusOneName] = useState('');
@@ -54,6 +60,7 @@ export default function RsvpForm() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsed = rsvpSchema.safeParse({
+      fullName,
       attending: attending || undefined,
       plusOne,
       plusOneName,
@@ -69,6 +76,7 @@ export default function RsvpForm() {
     try {
       setSubmitting(true);
       await submitRsvp({
+        fullName: fullName.trim(),
         attending: attending === 'yes',
         plusOne,
         plusOneName: plusOne ? plusOneName.trim() || undefined : undefined,
@@ -86,6 +94,17 @@ export default function RsvpForm() {
 
   return (
     <form onSubmit={onSubmit} className="grid gap-6">
+      <div className="grid gap-2">
+        <Label htmlFor="fullName">Full Name</Label>
+        <Input
+          id="fullName"
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Enter your full name"
+          required
+          value={fullName}
+        />
+      </div>
+
       <fieldset className="grid gap-3">
         <legend className="mb-1 font-medium text-sm">Will you attend?</legend>
         <RadioGroup
@@ -118,7 +137,7 @@ export default function RsvpForm() {
             exit={{ opacity: 0, height: 0 }}
             initial={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="grid gap-6 overflow-hidden"
+            className="grid gap-6"
             key="details"
           >
             <div className="grid gap-2">

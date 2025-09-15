@@ -3,6 +3,7 @@ import { mutation } from './_generated/server';
 
 export const submit = mutation({
   args: {
+    fullName: v.string(),
     attending: v.boolean(),
     plusOne: v.boolean(),
     plusOneName: v.optional(v.string()),
@@ -10,6 +11,7 @@ export const submit = mutation({
   },
   handler: async (ctx, args) => {
     const docId = await ctx.db.insert('rsvps', {
+      fullName: args.fullName,
       attending: args.attending,
       plusOne: args.plusOne,
       plusOneName: args.plusOneName,

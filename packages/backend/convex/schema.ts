@@ -7,6 +7,7 @@ export default defineSchema({
     completed: v.boolean(),
   }),
   rsvps: defineTable({
+    fullName: v.string(),
     attending: v.boolean(),
     plusOne: v.boolean(),
     plusOneName: v.optional(v.string()),
