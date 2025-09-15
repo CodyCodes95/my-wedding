@@ -124,19 +124,19 @@ const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
 // Images for the Dome Gallery
 const OUR_PHOTOS = [
   '/us/1.jpg',
-  '/us/2.JPG',
-  '/us/10.JPG',
+  '/us/2.jpg',
+  '/us/10.jpg',
   '/us/11.jpg',
   '/us/12.jpg',
   '/us/13.jpg',
   '/us/14.jpg',
-  '/us/15.JPG',
+  '/us/15.jpg',
   '/us/16.jpg',
   '/us/17.jpg',
-  '/us/18.JPG',
+  '/us/18.jpg',
   '/us/19.jpg',
-  '/us/20.JPG',
-  '/us/21.JPG',
+  '/us/20.jpg',
+  '/us/21.jpg',
 ];
 
 type Hotel = {
