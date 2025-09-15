@@ -19,6 +19,8 @@ export const Timeline = ({
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
     if (ref.current) {
@@ -34,6 +36,52 @@ export const Timeline = ({
 
   const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+  // Track which timeline entry is closest to the sticky indicator position (mobile)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let animationFrameId = 0;
+    let scheduled = false;
+
+    const updateActiveFromScroll = () => {
+      // Match the sticky offset used in the left column: top-40 = 10rem = 160px
+      const stickyAnchorY = 160;
+      let closestIndex = 0;
+      let smallestDelta = Number.POSITIVE_INFINITY;
+
+      for (const [index, element] of itemRefs.current.entries()) {
+        if (!element) continue;
+        const rect = element.getBoundingClientRect();
+        const delta = Math.abs(rect.top - stickyAnchorY);
+        if (delta < smallestDelta) {
+          smallestDelta = delta;
+          closestIndex = index;
+        }
+      }
+
+      setActiveIndex((prev) => (prev !== closestIndex ? closestIndex : prev));
+      scheduled = false;
+    };
+
+    const onScrollOrResize = () => {
+      if (scheduled) return;
+      scheduled = true;
+      animationFrameId = window.requestAnimationFrame(updateActiveFromScroll);
+    };
+
+    // Initialize once mounted
+    onScrollOrResize();
+
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [data.length]);
 
   return (
     <div
@@ -59,6 +107,9 @@ export const Timeline = ({
         {data.map((item, index) => (
           <div
             key={index}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
             className="flex justify-start pt-10 md:pt-40 md:gap-10"
           >
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
@@ -68,6 +119,17 @@ export const Timeline = ({
               <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-neutral-500 dark:text-neutral-500 ">
                 {item.title}
               </h3>
+              {index === activeIndex ? (
+                <div
+                  className="md:hidden absolute left-8 top-12 -translate-x-1/2 z-50 pointer-events-none"
+                  aria-live="polite"
+                  role="status"
+                >
+                  <span className="rounded-md border border-neutral-200 dark:border-neutral-700 bg-background/90 dark:bg-neutral-900/90 shadow px-2 py-0.5 text-xs font-semibold text-neutral-600 dark:text-neutral-400 whitespace-nowrap">
+                    {item.title}
+                  </span>
+                </div>
+              ) : null}
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
