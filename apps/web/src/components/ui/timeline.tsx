@@ -37,7 +37,7 @@ export const Timeline = ({
 
   return (
     <div
-      className="w-full bg-white dark:bg-neutral-950 font-sans md:px-10"
+      className="w-full bg-transparent font-sans md:px-10"
       ref={containerRef}
     >
       {(heading || subheading) && (
@@ -89,7 +89,7 @@ export const Timeline = ({
               height: heightTransform,
               opacity: opacityTransform,
             }}
-            className="absolute inset-x-0 top-0  w-[2px] bg-gradient-to-t from-purple-500 via-blue-500 to-transparent from-[0%] via-[10%] rounded-full"
+            className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-t from-primary via-primary/70 to-transparent from-[0%] via-[10%] rounded-full"
           />
         </div>
       </div>

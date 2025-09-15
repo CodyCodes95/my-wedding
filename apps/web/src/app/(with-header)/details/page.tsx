@@ -21,6 +21,7 @@ import {
 import SectionDivider from '@/components/section-divider';
 import RsvpForm from '@/components/rsvp-form';
 import { Button } from '@/components/ui/button';
+import { TimelineDemo } from '@/components/ui/@timeline';
 import {
   Card,
   CardContent,
@@ -428,6 +429,11 @@ export default function DetailsPage() {
               data={RELATIONSHIP_TIMELINE}
               defaultActiveStep={{ time: '2026', stepIndex: 0 }}
             />
+          </div>
+
+          {/* Vertical Timeline for comparison */}
+          <div className="mt-16">
+            <TimelineDemo />
           </div>
         </div>
       </section>
