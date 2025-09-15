@@ -19,6 +19,7 @@ import {
   type ArcTimelineItem,
 } from '@/components/magicui/arc-timeline';
 import SectionDivider from '@/components/section-divider';
+import RsvpForm from '@/components/rsvp-form';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -758,19 +759,13 @@ export default function DetailsPage() {
 
       {/* RSVP Section */}
       <section className="py-16" id="rsvp">
-        <div className="container mx-auto max-w-4xl px-4 text-center">
-          <h2 className="mb-8 font-light text-4xl text-primary">RSVP</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
-            Please let us know if you can join us for our special day. Your
-            response is requested by [RSVP Date].
+        <div className="container mx-auto max-w-4xl px-4">
+          <h2 className="mb-4 text-center font-light text-4xl text-primary">RSVP</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-center text-lg text-muted-foreground">
+            Let us know if you can make it, add a plus one, and request a song!
           </p>
-          <div className="mx-auto max-w-md rounded-lg bg-muted/50 p-8">
-            <p className="mb-4 text-muted-foreground">
-              RSVP form will be available here closer to the wedding date.
-            </p>
-            <p className="text-muted-foreground text-sm">
-              For now, please save the date!
-            </p>
+          <div className="mx-auto max-w-2xl rounded-lg border bg-card p-6">
+            <RsvpForm />
           </div>
         </div>
       </section>

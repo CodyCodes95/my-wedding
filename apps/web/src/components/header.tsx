@@ -41,7 +41,7 @@ export default function Header() {
               width={140}
             />
           </div>
-          <Link href="#rsvp">
+          <Link href="/details#rsvp">
             <Button className="bg-primary px-8 py-2 font-medium text-primary-foreground text-sm hover:bg-primary/90">
               RSVP
             </Button>

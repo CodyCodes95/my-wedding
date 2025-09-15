@@ -6,4 +6,11 @@ export default defineSchema({
     text: v.string(),
     completed: v.boolean(),
   }),
+  rsvps: defineTable({
+    attending: v.boolean(),
+    plusOne: v.boolean(),
+    plusOneName: v.optional(v.string()),
+    songRequest: v.optional(v.string()),
+    createdAt: v.number(),
+  }),
 });
