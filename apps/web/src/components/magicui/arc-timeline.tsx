@@ -1,6 +1,6 @@
 'use client';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface ArcTimelineItem {
@@ -174,6 +174,34 @@ export function ArcTimeline(props: ArcTimelineProps) {
     boundaryPlaceholderLinesCount,
   ]);
 
+  // Compute nearest step index to current rotation so details update while dragging
+  const allStepAngles = useMemo(() => getAllStepAngles(), [getAllStepAngles]);
+
+  const activeStepGlobalIndex = useMemo(() => {
+    if (allStepAngles.length === 0) return 0;
+    let closestIndex = 0;
+    let minDifference = Math.abs(circleContainerRotateDeg - allStepAngles[0]);
+    for (let i = 1; i < allStepAngles.length; i++) {
+      const difference = Math.abs(circleContainerRotateDeg - allStepAngles[i]);
+      if (difference < minDifference) {
+        minDifference = difference;
+        closestIndex = i;
+      }
+    }
+    return closestIndex;
+  }, [circleContainerRotateDeg, allStepAngles]);
+
+  const getGlobalIndex = useCallback(
+    (lineIndex: number, stepIndex: number) => {
+      let count = 0;
+      for (let i = 0; i < lineIndex; i++) {
+        count += data[i].steps.length;
+      }
+      return count + stepIndex;
+    },
+    [data]
+  );
+
   // Find the closest step angle to the current rotation
   const findClosestStepAngle = useCallback(
     (currentRotation: number) => {
@@ -331,9 +359,9 @@ export function ArcTimeline(props: ArcTimelineProps) {
                   lineIndex === data.length - 1 &&
                   stepIndex === line.steps.length - 1;
                 const isFirstStep = lineIndex === 0 && stepIndex === 0;
-                // check if the step is active
-                const isActive =
-                  Math.abs(angle + circleContainerRotateDeg) < 0.01;
+                // check if the step is active (nearest to current rotation)
+                const globalIndex = getGlobalIndex(lineIndex, stepIndex);
+                const isActive = globalIndex === activeStepGlobalIndex;
                 return (
                   <div key={`${lineIndex}-${stepIndex}`}>
                     {/* placeholder lines before the first step */}
