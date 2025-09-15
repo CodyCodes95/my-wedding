@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
-import CircularGallery from '@/components/CircularGallery';
+import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
 import DomeGallery from '@/components/DomeGallery';
 import {
   ArcTimeline,
@@ -335,15 +335,21 @@ const HOTELS: Hotel[] = [
 ];
 
 export default function DetailsPage() {
-  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(HOTELS[0]);
   const [activeStep, setActiveStep] = useState<StepId>(1);
 
-  const handleHotelSelect = useCallback((index: number) => {
+  const handleHotelActiveChange = useCallback((index: number) => {
     setSelectedHotel(HOTELS[index % HOTELS.length]);
   }, []);
 
-  const hotelItems = useMemo(
-    () => HOTELS.map((hotel) => ({ image: hotel.image, text: hotel.text })),
+  const hotelTestimonials = useMemo(
+    () =>
+      HOTELS.map((hotel) => ({
+        quote: hotel.description,
+        name: hotel.name,
+        designation: `${hotel.rate} • ${hotel.address}`,
+        src: hotel.image,
+      })),
     []
   );
 
@@ -618,16 +624,11 @@ export default function DetailsPage() {
    
    
             </div>
-            <div style={{ height: '600px', position: 'relative' }}>
-              <CircularGallery
-                bend={3}
-                borderRadius={0.05}
-                items={hotelItems}
-                onSelect={handleHotelSelect}
-                scrollEase={0.02}
-                textColor="#ffffff"
-              />
-            </div>
+            <AnimatedTestimonials
+              testimonials={hotelTestimonials}
+              autoplay={false}
+              onActiveChange={handleHotelActiveChange}
+            />
 
             {/* Hotel Details */}
             {selectedHotel && (
