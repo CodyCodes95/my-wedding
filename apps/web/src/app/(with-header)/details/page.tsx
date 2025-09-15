@@ -335,19 +335,15 @@ const HOTELS: Hotel[] = [
 ];
 
 export default function DetailsPage() {
-  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(HOTELS[0]);
   const [activeStep, setActiveStep] = useState<StepId>(1);
-
-  const handleHotelActiveChange = useCallback((index: number) => {
-    setSelectedHotel(HOTELS[index % HOTELS.length]);
-  }, []);
 
   const hotelTestimonials = useMemo(
     () =>
       HOTELS.map((hotel) => ({
         quote: hotel.description,
         name: hotel.name,
-        designation: `${hotel.rate} • ${hotel.address}`,
+        price: hotel.rate,
+        href: `https://${hotel.website}`,
         src: hotel.image,
       })),
     []
@@ -624,83 +620,9 @@ export default function DetailsPage() {
    
    
             </div>
-            <AnimatedTestimonials
-              testimonials={hotelTestimonials}
-              autoplay={false}
-              onActiveChange={handleHotelActiveChange}
-            />
+            <AnimatedTestimonials testimonials={hotelTestimonials} autoplay={false} />
 
-            {/* Hotel Details */}
-            {selectedHotel && (
-              <div className="mx-auto mt-12 max-w-4xl">
-                <div className="rounded-lg border bg-card p-8">
-                  <div className="grid gap-8 md:grid-cols-2">
-                    <div>
-                      <h3 className="mb-4 font-medium text-2xl">
-                        {selectedHotel.name}
-                      </h3>
-                      <p className="mb-4 text-muted-foreground">
-                        {selectedHotel.description}
-                      </p>
-
-                      <div className="mb-6 space-y-3">
-                        <div>
-                          <strong className="text-sm">Address:</strong>
-                          <p className="text-muted-foreground">
-                            {selectedHotel.address}
-                          </p>
-                        </div>
-                        <div>
-                          <strong className="text-sm">Phone:</strong>
-                          <p className="text-muted-foreground">
-                            {selectedHotel.phone}
-                          </p>
-                        </div>
-                        <div>
-                          <strong className="text-sm">Website:</strong>
-                          <p className="text-muted-foreground">
-                            {selectedHotel.website}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="mb-6 rounded-lg bg-primary/5 p-6">
-                        <h4 className="mb-2 font-medium">
-                          Wedding Block Details
-                        </h4>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <strong>Block Code:</strong>{' '}
-                            {selectedHotel.blockCode}
-                          </div>
-                          <div>
-                            <strong>Rate:</strong> {selectedHotel.rate}
-                          </div>
-                          <p className="mt-3 text-muted-foreground text-xs">
-                            Mention the block code when booking to receive the
-                            special wedding rate.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="mb-3 font-medium">Amenities</h4>
-                        <ul className="grid grid-cols-1 gap-2 text-muted-foreground text-sm">
-                          {selectedHotel.amenities.map((amenity, index) => (
-                            <li className="flex items-center" key={index}>
-                              <span className="mr-3 h-2 w-2 rounded-full bg-primary" />
-                              {amenity}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Hotel Details removed per request; all info shown in testimonials */}
           </div>
         </div>
       </section>

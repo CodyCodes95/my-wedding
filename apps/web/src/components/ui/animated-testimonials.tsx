@@ -3,14 +3,18 @@
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type Testimonial = {
   quote: string;
   name: string;
-  designation: string;
   src: string;
+  designation?: string;
+  price?: string;
+  href?: string;
 };
 export const AnimatedTestimonials = ({
   testimonials,
@@ -50,8 +54,14 @@ export const AnimatedTestimonials = ({
     }
   }, [autoplay]);
 
-  const randomRotateY = () => {
-    return Math.floor(Math.random() * 21) - 10;
+  // Deterministic per-index rotation to avoid SSR/CSR hydration mismatch
+  const deterministicRotateY = (index: number) => {
+    const a = 9301;
+    const c = 49297;
+    const m = 233280;
+    const seed = (index + 1) * 12345;
+    const rnd = (seed * a + c) % m; // 0..m-1
+    return Math.floor((rnd / m) * 21) - 10; // -10..10
   };
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
@@ -66,13 +76,13 @@ export const AnimatedTestimonials = ({
                     opacity: 0,
                     scale: 0.9,
                     z: -100,
-                    rotate: randomRotateY(),
+                    rotate: deterministicRotateY(index),
                   }}
                   animate={{
                     opacity: isActive(index) ? 1 : 0.7,
                     scale: isActive(index) ? 1 : 0.95,
                     z: isActive(index) ? 0 : -100,
-                    rotate: isActive(index) ? 0 : randomRotateY(),
+                    rotate: isActive(index) ? 0 : deterministicRotateY(index),
                     zIndex: isActive(index)
                       ? 40
                       : testimonials.length + 2 - index,
@@ -82,7 +92,7 @@ export const AnimatedTestimonials = ({
                     opacity: 0,
                     scale: 0.9,
                     z: 100,
-                    rotate: randomRotateY(),
+                    rotate: deterministicRotateY(index),
                   }}
                   transition={{
                     duration: 0.4,
@@ -127,10 +137,7 @@ export const AnimatedTestimonials = ({
             <h3 className="text-2xl font-bold text-black dark:text-white">
               {testimonials[active].name}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-neutral-500">
-              {testimonials[active].designation}
-            </p>
-            <motion.p className="mt-8 text-lg text-gray-500 dark:text-neutral-300">
+            <motion.p className="mt-6 text-lg text-gray-500 dark:text-neutral-300">
               {testimonials[active].quote.split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -155,6 +162,20 @@ export const AnimatedTestimonials = ({
                 </motion.span>
               ))}
             </motion.p>
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+              {testimonials[active].price && (
+                <p className="text-sm text-gray-600 dark:text-neutral-400">
+                  Price per night: <span className="font-medium text-foreground">{testimonials[active].price}</span>
+                </p>
+              )}
+              {testimonials[active].href && (
+                <Button asChild>
+                  <a href={testimonials[active].href} target="_blank" rel="noopener noreferrer">
+                    View website
+                  </a>
+                </Button>
+              )}
+            </div>
           </motion.div>
           <div className="flex gap-4 pt-12 md:pt-0">
             <button
