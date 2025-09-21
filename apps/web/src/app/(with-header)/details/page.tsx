@@ -280,7 +280,7 @@ export default function DetailsPage() {
               arcConfig={{
                 circleWidth: 4000,
                 angleBetweenMinorSteps: 0.5,
-                lineCountFillBetweenSteps: 6,
+                lineCountFillBetweenSteps: 10,
                 boundaryPlaceholderLinesCount: 40,
               }}
               className={
