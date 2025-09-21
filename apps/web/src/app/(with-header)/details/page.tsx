@@ -21,7 +21,7 @@ import {
 import SectionDivider from '@/components/section-divider';
 import RsvpForm from '@/components/rsvp-form';
 import { Button } from '@/components/ui/button';
-import { TimelineDemo } from '@/components/ui/@timeline';
+import { TimelineDemo } from '@/components/ui/scroll-timeline';
 import {
   Card,
   CardContent,
