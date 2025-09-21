@@ -236,13 +236,13 @@ export default function DetailsPage() {
         />
         <div className="relative z-10 flex flex-col items-center gap-6">
           <div className="font-medium text-lg text-primary tracking-wider">
-            – 10.26.2026 –
+            – 10.24.2026 –
           </div>
           <h1 className="font-light text-6xl text-primary leading-none md:text-8xl">
             Cody & Ash
           </h1>
           <p className="font-light text-primary text-xl italic">
-            are gettin married!
+            are getting married!
           </p>
         </div>
       </section>
@@ -483,54 +483,6 @@ export default function DetailsPage() {
 
       <SectionDivider />
 
-      {/* FAQs Section */}
-      <section className="py-16" id="faqs">
-        <div className="container mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 text-center font-light text-4xl text-primary">
-            FAQs
-          </h2>
-          <div className="mx-auto max-w-2xl space-y-8">
-            <div>
-              <h3 className="mb-2 font-medium text-xl">What should I wear?</h3>
-              <p className="text-muted-foreground">
-                Dress code information will be provided here.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-medium text-xl">
-                Will there be dancing?
-              </h3>
-              <p className="text-muted-foreground">
-                Information about entertainment and reception activities.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-medium text-xl">
-                Can I bring a plus-one?
-              </h3>
-              <p className="text-muted-foreground">
-                Plus-one policy and RSVP instructions.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-medium text-xl">
-                Are children welcome?
-              </h3>
-              <p className="text-muted-foreground">
-                Information about children at the wedding.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-medium text-xl">
-                What about dietary restrictions?
-              </h3>
-              <p className="text-muted-foreground">
-                How to communicate dietary needs and menu information.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <SectionDivider />
 

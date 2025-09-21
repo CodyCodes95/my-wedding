@@ -9,7 +9,7 @@ export default function Header() {
     { to: '#about', label: 'Our Story' },
     { to: '#getting-there', label: 'Getting there' },
     { to: '#accommodation', label: 'Accommodation' },
-    { to: '#faqs', label: 'FAQs' },
+      
   ];
 
   return (
