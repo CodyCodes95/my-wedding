@@ -11,6 +11,7 @@ import {
   useVelocity,
   useAnimationControls,
 } from "motion/react";
+import { HeartIcon, TentIcon } from "lucide-react";
 
 export const DraggableCardBody = ({
   className,
@@ -192,43 +193,35 @@ export const DraggableCardContainer = ({
 };
 
 // Assets from public/timeline
-const TIMELINE_IMAGES: string[] = [
-  "/timeline/first-christmas.jpg",
-  "/timeline/first-date.JPG",
-  "/timeline/first-holiday.jpg",
-  "/timeline/move-melb.jpg",
-  "/timeline/teach-drive.JPG",
-  "/timeline/web_2nd-overseas-1.jpg",
-  "/timeline/web_first-bled-1.jpg",
-  "/timeline/web_first-bled-2.jpg",
-  "/timeline/web_first-bled-3.jpg",
-  "/timeline/web_first-bled-4.jpg",
-  "/timeline/web_first-overseas-2.jpg",
-  "/timeline/web_first-oveseas-1.jpg",
-  "/timeline/web_house-move.jpg",
-  "/timeline/web_move-in.jpg",
-  "/timeline/web_move-melb-1.jpg",
-  "/timeline/web_move-melb-2.JPG",
-  "/timeline/web_new-home-2.jpg",
-  "/timeline/web_new-home-one.JPG",
-  "/timeline/web_propose.jpg",
-  "/timeline/web_second-bled-1.jpg",
-  "/timeline/web_second-overseas-2.jpg",
-  "/timeline/web_second-overseas-3.JPG",
-  "/timeline/web_second-overseas-4.jpg",
-  "/timeline/web_second-overseas.jpg",
-  "/timeline/web_son-biscuit-1.jpg",
-  "/timeline/web_son-biscuit-2.JPG",
-  "/timeline/web_start-dating.JPG",
-  "/timeline/web_toastie-1.jpg",
+const TIMELINE_IMAGES = [
+  { imgSrc: "/timeline/web_start-dating.JPG", title: <HeartIcon /> },
+  { imgSrc: "/timeline/first-date.JPG", title: "Our first date" },
+  { imgSrc: "/timeline/first-christmas.jpg", title: "Our first Christmas" },
+  { imgSrc: "/timeline/first-holiday.jpg", title: "Our first holiday" },
+  { imgSrc: "/timeline/teach-drive.JPG", title: "Teaching Ash to drive" },
+  { imgSrc: "/timeline/web_move-in.jpg", title: "Moving in together" },
+  { imgSrc: "/timeline/web_move-melb-1.jpg", title: "Moving to Melbourne" },
+  { imgSrc: "/timeline/move-melb.jpg", title: "Picnic in Melbourne" },
+  { imgSrc: "/timeline/web_move-melb-2.JPG", title: "Luna supervising our move" },
+  { imgSrc: "/timeline/web_first-oveseas-1.jpg", title: "Our first overseas holiday" },
+  { imgSrc: "/timeline/web_first-overseas-2.jpg", title: <HeartIcon /> },
+  { imgSrc: "/timeline/web_first-bled-1.jpg", title: "First time in Bled" },
+  { imgSrc: "/timeline/web_first-bled-2.jpg", title: <TentIcon /> },
+  { imgSrc: "/timeline/web_first-bled-3.jpg", title: "Breakfast in Bled" },
+  { imgSrc: "/timeline/web_first-bled-4.jpg", title: "Cycling the Bled countryside" },
+    { imgSrc: "/timeline/web_son-biscuit-1.jpg", title: "Welcome home Biscuit" },
+  { imgSrc: "/timeline/web_son-biscuit-2.JPG", title: "" },
+  { imgSrc: "/timeline/web_second-bled-1.jpg", title: "Our second visit to Bled" },
+    { imgSrc: "/timeline/web_2nd-overseas-1.jpg", title: "" },
+  { imgSrc: "/timeline/web_second-overseas-2.jpg", title: "" },
+  { imgSrc: "/timeline/web_second-overseas-3.JPG", title: "" },
+  { imgSrc: "/timeline/web_second-overseas-4.jpg", title: "" },
+  { imgSrc: "/timeline/web_second-overseas.jpg", title: "" },
+  { imgSrc: "/timeline/web_house-move.jpg", title: "Moving into our home" },
+  { imgSrc: "/timeline/web_new-home-one.JPG", title: "Biscui'ts first Halloween" },
+  { imgSrc: "/timeline/web_propose.jpg", title: "The proposal" },
+  { imgSrc: "/timeline/web_toastie-1.jpg", title: "Welcome home Toastie" },
 ];
-
-
-const filenameToTitle = (path: string): string => {
-  const file = path.split("/").pop() ?? path;
-  const base = file.replace(/\.[^.]+$/, "");
-  return base;
-};
 
 export function DraggableCardDemo() {
   const numColumns = 4;
@@ -247,8 +240,7 @@ export function DraggableCardDemo() {
   return (
     <div className="relative ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-screen" style={{ height: totalHeightPx }}>
       <DraggableCardContainer className="relative w-full h-full overflow-visible">
-        {TIMELINE_IMAGES.map((src, index) => {
-          const title = filenameToTitle(src);
+        {TIMELINE_IMAGES.map(({ imgSrc, title }, index) => {
           const columnIndex = index % numColumns;
           const rowIndex = Math.floor(index / numColumns);
 
@@ -259,12 +251,12 @@ export function DraggableCardDemo() {
           const topPx = baseTopPx + rowIndex * rowStepPx + jitterY;
           const leftPercent = columnPercents[columnIndex];
 
-          const zIndex = zOrder.get(src) ?? index;
+          const zIndex = zOrder.get(imgSrc) ?? index;
           const bringToFront = () => {
             zCounterRef.current += 1;
             setZOrder((prev) => {
               const next = new Map(prev);
-              next.set(src, zCounterRef.current);
+              next.set(imgSrc, zCounterRef.current);
               return next;
             });
           };
@@ -272,7 +264,7 @@ export function DraggableCardDemo() {
           return (
             <div
               className="absolute"
-              key={src}
+              key={imgSrc}
               style={{
                 top: topPx,
                 left: `calc(${leftPercent}% + ${jitterX}px)`,
@@ -286,7 +278,7 @@ export function DraggableCardDemo() {
                 <div className="relative z-10 h-80 w-full">
                   <Image
                     alt={title}
-                    src={src}
+                    src={imgSrc}
                     fill
                     sizes="320px"
                     className="object-cover"
