@@ -20,6 +20,7 @@ export const DraggableCardBody = ({
   className?: string;
   children?: React.ReactNode;
 }) => {
+  const [isDraggable, setIsDraggable] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -61,6 +62,19 @@ export const DraggableCardBody = ({
   );
 
   useEffect(() => {
+    // Enable drag only for non-touch and md+ screens to preserve mobile scroll
+    const enableDragIfEligible = () => {
+      if (typeof window === "undefined") return;
+      const mql = window.matchMedia("(min-width: 768px)");
+      const isTouch = navigator.maxTouchPoints > 0;
+      setIsDraggable(mql.matches && !isTouch);
+      const handler = () => setIsDraggable(mql.matches && !isTouch);
+      mql.addEventListener("change", handler);
+      return () => mql.removeEventListener("change", handler);
+    };
+
+    const cleanupDrag = enableDragIfEligible();
+
     // Update constraints when component mounts or window resizes
     const updateConstraints = () => {
       if (typeof window !== "undefined") {
@@ -81,6 +95,7 @@ export const DraggableCardBody = ({
     // Clean up
     return () => {
       window.removeEventListener("resize", updateConstraints);
+      if (cleanupDrag) cleanupDrag();
     };
   }, []);
 
@@ -109,7 +124,7 @@ export const DraggableCardBody = ({
   return (
     <motion.div
       ref={cardRef}
-      drag
+      drag={isDraggable}
       dragConstraints={constraints}
       onDragStart={() => {
         document.body.style.cursor = "grabbing";
@@ -159,13 +174,15 @@ export const DraggableCardBody = ({
         rotateY,
         opacity,
         willChange: "transform",
+        // Allow native vertical scroll on touch/small screens
+        touchAction: isDraggable ? "none" : "auto",
       }}
       animate={controls}
       whileHover={{ scale: 1.01 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative min-h-96 w-80 overflow-hidden rounded-md bg-neutral-100 p-6 shadow-2xl transform-3d dark:bg-neutral-900",
+        "relative min-h-96 w-72 md:w-80 overflow-hidden rounded-md bg-neutral-100 p-4 md:p-6 shadow-2xl transform-3d dark:bg-neutral-900",
         className,
       )}
     >
@@ -238,61 +255,98 @@ export function DraggableCardDemo() {
   const zCounterRef = useRef<number>(1000);
 
   return (
-    <div className="relative ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-screen" style={{ height: totalHeightPx }}>
-      <DraggableCardContainer className="relative w-full h-full overflow-visible">
-        {TIMELINE_IMAGES.map(({ imgSrc, title }, index) => {
-          const columnIndex = index % numColumns;
-          const rowIndex = Math.floor(index / numColumns);
+    <>
+      {/* Mobile-friendly grid (no drag) */}
+      <div className="md:hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {TIMELINE_IMAGES.map(({ imgSrc, title }, index) => {
+            const altText = typeof title === "string" && title.trim() ? title : "Our story";
+            return (
+              <div key={imgSrc + index} className="flex flex-col items-center">
+                <DraggableCardBody className="w-full">
+                  <div className="relative z-10 aspect-[4/5] w-full">
+                    <Image
+                      alt={altText}
+                      src={imgSrc}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                      className="object-cover"
+                      priority={false}
+                    />
+                  </div>
+                  {typeof title === "string" && title.trim() ? (
+                    <h3 className="mt-3 text-center text-lg font-semibold text-neutral-700 dark:text-neutral-300">
+                      {title}
+                    </h3>
+                  ) : null}
+                </DraggableCardBody>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-          const jitterX = Math.round(noise(index, 1.7) * 24); // px
-          const jitterY = Math.round(noise(index, 2.3) * 14); // px
-          const rotationDeg = Math.round(noise(index, 3.1) * 4); // degrees
+      {/* Original draggable collage for md+ */}
+      <div className="relative hidden md:block ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-screen" style={{ height: totalHeightPx }}>
+        <DraggableCardContainer className="relative w-full h-full overflow-visible">
+          {TIMELINE_IMAGES.map(({ imgSrc, title }, index) => {
+            const columnIndex = index % numColumns;
+            const rowIndex = Math.floor(index / numColumns);
 
-          const topPx = baseTopPx + rowIndex * rowStepPx + jitterY;
-          const leftPercent = columnPercents[columnIndex];
+            const jitterX = Math.round(noise(index, 1.7) * 24); // px
+            const jitterY = Math.round(noise(index, 2.3) * 14); // px
+            const rotationDeg = Math.round(noise(index, 3.1) * 4); // degrees
 
-          const zIndex = zOrder.get(imgSrc) ?? index;
-          const bringToFront = () => {
-            zCounterRef.current += 1;
-            setZOrder((prev) => {
-              const next = new Map(prev);
-              next.set(imgSrc, zCounterRef.current);
-              return next;
-            });
-          };
+            const topPx = baseTopPx + rowIndex * rowStepPx + jitterY;
+            const leftPercent = columnPercents[columnIndex];
 
-          return (
-            <div
-              className="absolute"
-              key={imgSrc}
-              style={{
-                top: topPx,
-                left: `calc(${leftPercent}% + ${jitterX}px)`,
-                transform: `rotate(${rotationDeg}deg)`,
-                zIndex,
-              }}
-              onMouseOver={bringToFront}
-              onPointerDown={bringToFront}
-            >
-              <DraggableCardBody>
-                <div className="relative z-10 h-80 w-full">
-                  <Image
-                    alt={title}
-                    src={imgSrc}
-                    fill
-                    sizes="320px"
-                    className="object-cover"
-                    priority={false}
-                  />
-                </div>
-                <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
-                  {title}
-                </h3>
-              </DraggableCardBody>
-            </div>
-          );
-        })}
-      </DraggableCardContainer>
-    </div>
+            const zIndex = zOrder.get(imgSrc) ?? index;
+            const bringToFront = () => {
+              zCounterRef.current += 1;
+              setZOrder((prev) => {
+                const next = new Map(prev);
+                next.set(imgSrc, zCounterRef.current);
+                return next;
+              });
+            };
+
+            const altText = typeof title === "string" && title.trim() ? title : "Our story";
+
+            return (
+              <div
+                className="absolute"
+                key={imgSrc}
+                style={{
+                  top: topPx,
+                  left: `calc(${leftPercent}% + ${jitterX}px)`,
+                  transform: `rotate(${rotationDeg}deg)`,
+                  zIndex,
+                }}
+                onMouseOver={bringToFront}
+                onPointerDown={bringToFront}
+              >
+                <DraggableCardBody>
+                  <div className="relative z-10 h-80 w-full">
+                    <Image
+                      alt={altText}
+                      src={imgSrc}
+                      fill
+                      sizes="320px"
+                      className="object-cover"
+                      priority={false}
+                    />
+                  </div>
+                  {typeof title === "string" && title.trim() ? (
+                    <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
+                      {title}
+                    </h3>
+                  ) : null}
+                </DraggableCardBody>
+              </div>
+            );
+          })}
+        </DraggableCardContainer>
+      </div>
+    </>
   );
 }
