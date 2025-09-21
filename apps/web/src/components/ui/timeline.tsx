@@ -11,7 +11,7 @@ export type TimelineImage = {
 export type TimelineEntry = {
   title: string;
   date?: string;
-  content: React.ReactNode;
+  content?: React.ReactNode;
   images?: TimelineImage[];
 };
 
@@ -82,10 +82,23 @@ export const Timeline = ({
       const stickyAnchorY = 160;
       let closestIndex = 0;
       let smallestDelta = Number.POSITIVE_INFINITY;
+      let activeIndex = 0;
+      let foundActive = false;
 
       for (const [index, element] of itemRefs.current.entries()) {
         if (!element) continue;
         const rect = element.getBoundingClientRect();
+
+        // Check if the sticky anchor is within this item's bounds
+        const itemTop = rect.top;
+        const itemBottom = rect.bottom;
+        if (stickyAnchorY >= itemTop && stickyAnchorY <= itemBottom) {
+          activeIndex = index;
+          foundActive = true;
+          break;
+        }
+
+        // Fallback: find closest item if no item contains the anchor
         const delta = Math.abs(rect.top - stickyAnchorY);
         if (delta < smallestDelta) {
           smallestDelta = delta;
@@ -93,7 +106,9 @@ export const Timeline = ({
         }
       }
 
-      setActiveIndex((prev) => (prev !== closestIndex ? closestIndex : prev));
+      // Use the active index if found, otherwise use the closest
+      const finalIndex = foundActive ? activeIndex : closestIndex;
+      setActiveIndex((prev) => (prev !== finalIndex ? finalIndex : prev));
       scheduled = false;
     };
 
@@ -155,38 +170,21 @@ export const Timeline = ({
                     {item.date}
                   </span>
                 ) : null}
-                <h3 className="text-primary text-xl md:text-5xl font-bold">
-                  {item.title}
-                </h3>
               </div>
-              {index === activeIndex ? (
+              {index === activeIndex && item.date ? (
                 <div
                   className="md:hidden absolute left-8 top-12 -translate-x-1/2 z-50 pointer-events-none"
                   aria-live="polite"
                   role="status"
                 >
                   <span className="rounded-md border border-neutral-200 dark:border-neutral-700 bg-background/90 dark:bg-neutral-900/90 shadow px-2 py-0.5 text-xs font-semibold text-neutral-600 dark:text-neutral-400 whitespace-nowrap">
-                    <span className="inline-flex items-center gap-2">
-                      {item.date ? (
-                        <span className="rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                          {item.date}
-                        </span>
-                      ) : null}
-                      <span>{item.title}</span>
-                    </span>
+                    {item.date}
                   </span>
                 </div>
               ) : null}
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              {item.date ? (
-                <div className="md:hidden mb-1">
-                  <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                    {item.date}
-                  </span>
-                </div>
-              ) : null}
               <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
                 {item.title}
               </h3>
