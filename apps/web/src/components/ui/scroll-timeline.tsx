@@ -7,13 +7,7 @@ export function TimelineDemo(): React.ReactElement {
     {
       date: "March 23rd, 2018",
       title: "We start dating!",
-      content: (
-        <div>
-          <h2 className="text-primary text-3xl">
-            We start dating
-          </h2>
-        </div>
-      ),
+
       images: [
         { img: "/timeline/web_start-dating.JPG", name: "When we started dating" },
       ],

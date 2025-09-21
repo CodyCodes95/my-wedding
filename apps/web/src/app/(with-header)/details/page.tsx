@@ -276,7 +276,7 @@ export default function DetailsPage() {
             Our Story
           </h2>
 
-          <div className="relative" >
+          <div className="relative hidden md:block" >
             <WeddingArcTimeline
               arcConfig={{
                 circleWidth: 4000,
