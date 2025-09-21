@@ -23,15 +23,40 @@ export const Timeline = ({
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setHeight(rect.height);
+    if (!ref.current) return;
+
+    const element = ref.current;
+
+    const measure = () => {
+      setHeight(element.getBoundingClientRect().height);
+    };
+
+    // Initial measure
+    measure();
+
+    // Observe content size changes (e.g., images loading)
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof window !== "undefined" && "ResizeObserver" in window) {
+      resizeObserver = new ResizeObserver(() => {
+        measure();
+      });
+      resizeObserver.observe(element);
     }
-  }, [ref]);
+
+    // Also update on load/resize for good measure
+    window.addEventListener("load", measure);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      window.removeEventListener("load", measure);
+      window.removeEventListener("resize", measure);
+      if (resizeObserver) resizeObserver.disconnect();
+    };
+  }, [data.length]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 10%", "end 50%"],
+    offset: ["start 10%", "end 90%"],
   });
 
   const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
