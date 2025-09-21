@@ -487,9 +487,6 @@ export default function DetailsPage() {
 
       <SectionDivider />
 
-
-      <SectionDivider />
-
       {/* RSVP Section */}
       <section className="py-16" id="rsvp">
         <div className="container mx-auto max-w-4xl px-4">

@@ -14,13 +14,14 @@ export function TimelineDemo(): React.ReactElement {
     },
     {
       title: "Our First Date",
-
-      images: [
-        { img: "/timeline/first-date.JPG", name: "Our first date" },
-      ],
-    },
-    {
-      title: "Teaching Ash how to drive",
+date: "2018",
+images: [
+  { img: "/timeline/first-date.JPG", name: "Our first date" },
+],
+},
+{
+  title: "Teaching Ash how to drive",
+  date: "2018",
 
       images: [
         { img: "/timeline/teach-drive.JPG", name: "Teaching Ash to drive" },
@@ -35,6 +36,7 @@ export function TimelineDemo(): React.ReactElement {
     },
     {
       title: "First Christmas Together",
+      date: "Dec 2018",
       images: [
         { img: "/timeline/first-christmas.jpg", name: "Our first Christmas together" },
       ],
