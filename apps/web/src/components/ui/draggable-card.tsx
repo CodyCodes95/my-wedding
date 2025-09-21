@@ -1,5 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
 import {
   motion,
@@ -189,3 +190,100 @@ export const DraggableCardContainer = ({
     <div className={cn("[perspective:3000px]", className)}>{children}</div>
   );
 };
+
+// Assets from public/timeline
+const TIMELINE_IMAGES: string[] = [
+  "/timeline/first-christmas.jpg",
+  "/timeline/first-date.JPG",
+  "/timeline/first-holiday.jpg",
+  "/timeline/move-melb.jpg",
+  "/timeline/teach-drive.JPG",
+  "/timeline/web_2nd-overseas-1.jpg",
+  "/timeline/web_first-bled-1.jpg",
+  "/timeline/web_first-bled-2.jpg",
+  "/timeline/web_first-bled-3.jpg",
+  "/timeline/web_first-bled-4.jpg",
+  "/timeline/web_first-overseas-2.jpg",
+  "/timeline/web_first-oveseas-1.jpg",
+  "/timeline/web_house-move.jpg",
+  "/timeline/web_move-in.jpg",
+  "/timeline/web_move-melb-1.jpg",
+  "/timeline/web_move-melb-2.JPG",
+  "/timeline/web_new-home-2.jpg",
+  "/timeline/web_new-home-one.JPG",
+  "/timeline/web_propose.jpg",
+  "/timeline/web_second-bled-1.jpg",
+  "/timeline/web_second-overseas-2.jpg",
+  "/timeline/web_second-overseas-3.JPG",
+  "/timeline/web_second-overseas-4.jpg",
+  "/timeline/web_second-overseas.jpg",
+  "/timeline/web_son-biscuit-1.jpg",
+  "/timeline/web_son-biscuit-2.JPG",
+  "/timeline/web_start-dating.JPG",
+  "/timeline/web_toastie-1.jpg",
+];
+
+const filenameToTitle = (path: string): string => {
+  const file = path.split("/").pop() ?? path;
+  const base = file.replace(/\.[^.]+$/, "");
+  return base;
+};
+
+export function DraggableCardDemo() {
+  const numColumns = 4;
+  const columnPercents = [8, 28, 48, 68];
+  const rowStepPx = 260;
+  const baseTopPx = 60;
+
+  const rows = Math.ceil(TIMELINE_IMAGES.length / numColumns);
+  const totalHeightPx = baseTopPx + rows * rowStepPx + 400;
+
+  const noise = (n: number, seed: number) => Math.sin(n * 0.91 + seed);
+
+  return (
+    <div className="relative w-full" style={{ height: totalHeightPx }}>
+      <DraggableCardContainer className="relative w-full overflow-clip">
+        {TIMELINE_IMAGES.map((src, index) => {
+          const title = filenameToTitle(src);
+          const columnIndex = index % numColumns;
+          const rowIndex = Math.floor(index / numColumns);
+
+          const jitterX = Math.round(noise(index, 1.7) * 60); // px
+          const jitterY = Math.round(noise(index, 2.3) * 30); // px
+          const rotationDeg = Math.round(noise(index, 3.1) * 6); // degrees
+
+          const topPx = baseTopPx + rowIndex * rowStepPx + jitterY;
+          const leftPercent = columnPercents[columnIndex];
+
+          return (
+            <div
+              className="absolute"
+              key={src}
+              style={{
+                top: topPx,
+                left: `calc(${leftPercent}% + ${jitterX}px)`,
+                transform: `rotate(${rotationDeg}deg)`,
+              }}
+            >
+              <DraggableCardBody>
+                <div className="relative z-10 h-80 w-80">
+                  <Image
+                    alt={title}
+                    src={src}
+                    fill
+                    sizes="320px"
+                    className="object-cover"
+                    priority={false}
+                  />
+                </div>
+                <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
+                  {title}
+                </h3>
+              </DraggableCardBody>
+            </div>
+          );
+        })}
+      </DraggableCardContainer>
+    </div>
+  );
+}

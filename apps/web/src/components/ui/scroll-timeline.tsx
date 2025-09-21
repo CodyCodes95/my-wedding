@@ -6,7 +6,8 @@ import { Timeline } from "@/components/ui/timeline";
 export function TimelineDemo(): React.ReactElement {
   const data = [
     {
-      title: "March 23rd, 2018",
+      date: "March 23rd, 2018",
+      title: "We start dating!",
       content: (
         <div>
           <h2 className="text-primary text-3xl">
@@ -63,7 +64,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "September 2018",
+      date: "September 2018",
+      title: "Our first holiday",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -101,7 +103,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "January 19th, 2019",
+      date: "January 19th, 2019",
+      title: "First Melbourne trip",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -120,7 +123,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "November 8th, 2020",
+      date: "November 8th, 2020",
+      title: "We move in together",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -139,7 +143,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "September 10th, 2022",
+      date: "September 10th, 2022",
+      title: "The big move to Melbourne",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -165,7 +170,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "May 2023",
+      date: "May 2023",
+      title: "First overseas holiday",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -184,7 +190,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "May 23rd, 2023",
+      date: "May 23rd, 2023",
+      title: "First time in Bled",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -210,7 +217,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "December 5th, 2023",
+      date: "December 5th, 2023",
+      title: "We welcome Biscuit",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -229,7 +237,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "June 1st, 2024",
+      date: "June 1st, 2024",
+      title: "Second visit to Bled",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -248,7 +257,8 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
-      title: "August 28th, 2024",
+      date: "August 28th, 2024",
+      title: "We buy our first home",
       content: (
         <div>
           <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
@@ -274,6 +284,7 @@ export function TimelineDemo(): React.ReactElement {
       ),
     },
     {
+      date: "August 28th, 2024",
       title: "The Proposal 💍",
       content: (
         <div>

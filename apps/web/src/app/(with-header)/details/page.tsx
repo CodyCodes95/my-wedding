@@ -1,27 +1,12 @@
 'use client';
 
-import {
-  Calendar,
-  Camera,
-  Gift,
-  Globe,
-  Heart,
-  Home,
-  Rocket,
-  Star,
-} from 'lucide-react';
 import Image from 'next/image';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
-import DomeGallery from '@/components/DomeGallery';
-import {
-  ArcTimeline,
-  type ArcTimelineItem,
-} from '@/components/magicui/arc-timeline';
+import { DraggableCardDemo } from '@/components/ui/draggable-card';
+import { WeddingArcTimeline } from '@/components/magicui/arc-timeline';
 import SectionDivider from '@/components/section-divider';
 import RsvpForm from '@/components/rsvp-form';
-import { Button } from '@/components/ui/button';
-import { TimelineDemo } from '@/components/ui/scroll-timeline';
 import {
   Card,
   CardContent,
@@ -29,99 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
-const RELATIONSHIP_TIMELINE: ArcTimelineItem[] = [
-  {
-    time: '2020',
-    steps: [
-      {
-        icon: <Heart height={20} width={20} />,
-        content:
-          'First met through mutual friends at a coffee shop downtown - love at first sight!',
-      },
-    ],
-  },
-  {
-    time: '2021',
-    steps: [
-      {
-        icon: <Camera height={20} width={20} />,
-        content:
-          'Our first official date - a romantic dinner followed by stargazing in the park.',
-      },
-      {
-        icon: <Globe height={20} width={20} />,
-        content:
-          'First vacation together to the mountains - discovered our shared love for adventure.',
-      },
-    ],
-  },
-  {
-    time: '2022',
-    steps: [
-      {
-        icon: <Home height={20} width={20} />,
-        content:
-          'Moved in together and adopted our first pet - creating our little family.',
-      },
-      {
-        icon: <Star height={20} width={20} />,
-        content:
-          "Said 'I love you' for the first time during a sunset walk on the beach.",
-      },
-    ],
-  },
-  {
-    time: '2023',
-    steps: [
-      {
-        icon: <Rocket height={20} width={20} />,
-        content:
-          'Started planning our future together and began looking at rings.',
-      },
-      {
-        icon: <Gift height={20} width={20} />,
-        content:
-          'Celebrated our third anniversary with a surprise weekend getaway.',
-      },
-    ],
-  },
-  {
-    time: '2024',
-    steps: [
-      {
-        icon: <Heart height={20} width={20} />,
-        content:
-          'The proposal! A magical moment at our favorite spot where we first met.',
-      },
-      {
-        icon: <Calendar height={20} width={20} />,
-        content:
-          'Started planning our dream wedding and chose October 26, 2026 as our special date.',
-      },
-    ],
-  },
-  {
-    time: '2025',
-    steps: [
-      {
-        icon: <Globe height={20} width={20} />,
-        content:
-          'Engaged bliss - traveling and making memories while planning our big day.',
-      },
-    ],
-  },
-  {
-    time: '2026',
-    steps: [
-      {
-        icon: <Star height={20} width={20} />,
-        content:
-          'Our wedding day - celebrating our love story with family and friends!',
-      },
-    ],
-  },
-];
 
 // Images for the Dome Gallery
 const OUR_PHOTOS = [
@@ -364,17 +256,11 @@ export default function DetailsPage() {
           <div className="grid gap-8 md:grid-cols-2">
             <div className="text-center">
               <h3 className="mb-4 font-medium text-2xl">When</h3>
-              <p className="text-lg">October 26, 2026</p>
-              <p className="text-muted-foreground">4:00 PM - 11:00 PM</p>
+              <p className="text-lg">October 24, 2026</p>
             </div>
             <div className="text-center">
               <h3 className="mb-4 font-medium text-2xl">Where</h3>
-              <p className="text-lg">Venue Name</p>
-              <p className="text-muted-foreground">
-                123 Wedding Lane
-                <br />
-                City, State 12345
-              </p>
+              <p className="text-lg">Bled, Slovenia</p>
             </div>
           </div>
         </div>
@@ -390,7 +276,7 @@ export default function DetailsPage() {
           </h2>
 
           <div className="relative" >
-            <ArcTimeline
+            <WeddingArcTimeline
               arcConfig={{
                 circleWidth: 4000,
                 angleBetweenMinorSteps: 0.5,
@@ -407,32 +293,13 @@ export default function DetailsPage() {
                 '[--time-inactive-color:#a3a3a3] dark:[--time-inactive-color:#a3a3a3]' +
                 '[--description-color:#555555] dark:[--description-color:#d4d4d4]'
               }
-              data={RELATIONSHIP_TIMELINE}
-              defaultActiveStep={{ time: '2026', stepIndex: 0 }}
             />
           </div>
-
-          {/* Vertical Timeline for comparison */}
-          <div className="mt-16">
-            <TimelineDemo />
+          <div className="mt-12">
+            <DraggableCardDemo />
           </div>
         </div>
       </section>
-
-      <div className="relative w-full" style={{ height: '80vh' }}>
-        <DomeGallery
-          fit={2}
-          grayscale={false}
-          imageBorderRadius="15px"
-          images={OUR_PHOTOS}
-          maxRadius={900}
-          minRadius={400}
-          openedImageBorderRadius="25px"
-          openedImageHeight="500px"
-          openedImageWidth="500px"
-          overlayBlurColor="transparent"
-        />
-      </div>
 
       <SectionDivider />
 

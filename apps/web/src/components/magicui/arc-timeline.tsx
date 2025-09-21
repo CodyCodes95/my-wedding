@@ -1,7 +1,22 @@
 'use client';
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode, CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import {
+  Car,
+  Gem,
+  Heart,
+  Home,
+  House,
+  MapPin,
+  Mountain,
+  PawPrint,
+  Plane,
+  Sun,
+  TreePine,
+  Truck,
+  Wine,
+} from 'lucide-react';
 
 export interface ArcTimelineItem {
   time: ReactNode;
@@ -538,5 +553,107 @@ function PlaceholderLines(props: PlaceholderLinesProps) {
           );
         })}
     </>
+  );
+}
+
+export function WeddingArcTimeline(
+  props: Omit<ArcTimelineProps, 'data'>
+) {
+  const { className, style, arcConfig, defaultActiveStep, ...restProps } = props;
+
+  const arcData: ArcTimelineItem[] = [
+    {
+      time: "23rd March, 2018",
+      steps: [
+        { icon: <Heart className="h-5 w-5" />, content: 'We start dating' },
+      ],
+  },
+    {
+      time: 'September 2018',
+      steps: [
+        { icon: <Sun className="h-5 w-5" />, content: 'Our first holiday together' },
+      ],
+    },
+    {
+      time: '19th January, 2019',
+      steps: [
+        { icon: <MapPin className="h-5 w-5" />, content: 'Our first Melbourne trip together. We told ourselves after this visit we would one day move here.' },
+      ],
+    },
+    {
+      time: '8th November, 2020',
+      steps: [
+        { icon: <Home className="h-5 w-5" />, content: 'We move in together' },
+      ],
+    },
+    {
+      time: '10th September, 2022',
+      steps: [
+        { icon: <Truck className="h-5 w-5" />, content: 'Big move to Melbourne' },
+      ],
+    },
+    {
+      time: "May 2023",
+      steps: [
+        { icon: <Plane className="h-5 w-5" />, content: 'First overseas holiday' },
+      ],
+    },
+    {
+      time: "23rd May, 2023",
+      steps: [
+        { icon: <Mountain className="h-5 w-5" />, content: 'First time in Bled' },
+      ],
+    },
+    {
+      time: '5th December, 2023',
+      steps: [
+        { icon: <PawPrint className="h-5 w-5" />, content: 'We welcome Biscuit' },
+      ],
+    },
+    {
+      time: '1st June, 2024',
+      steps: [
+        { icon: <Mountain className="h-5 w-5" />, content: 'Second visit to Bled' },
+        
+      ],
+    },
+    {
+      time: "28th August, 2024",
+      steps: [
+        { icon: <Home className="h-5 w-5" />, content: 'We buy our first home' },
+      ],
+    },
+    {
+      time: "That night...",
+      steps: [
+        { icon: <Gem className="h-5 w-5" />, content: 'The proposal' },
+      ],
+    },
+
+
+  ];
+
+  const iconColorVars: Record<
+    '--icon-active-color' | '--icon-inactive-color',
+    string
+  > = {
+    '--icon-active-color': 'var(--color-primary)',
+    '--icon-inactive-color': 'var(--color-primary)',
+  };
+
+  const mergedStyle: CSSProperties = {
+    ...(style as CSSProperties),
+    ...iconColorVars,
+  };
+
+  return (
+    <ArcTimeline
+      data={arcData}
+      arcConfig={arcConfig}
+      defaultActiveStep={defaultActiveStep}
+      className={cn(className)}
+      style={mergedStyle}
+      {...restProps}
+    />
   );
 }

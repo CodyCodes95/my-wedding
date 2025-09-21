@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 export type TimelineEntry = {
   title: string;
+  date?: string;
   content: React.ReactNode;
 };
 
@@ -141,9 +142,16 @@ export const Timeline = ({
               <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-background flex items-center justify-center">
                 <div className="h-4 w-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 p-2" />
               </div>
-              <h3 className="hidden text-primary md:block text-xl md:pl-20 md:text-5xl font-bold">
-                {item.title}
-              </h3>
+              <div className="hidden md:flex items-baseline gap-3 md:pl-20">
+                {item.date ? (
+                  <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    {item.date}
+                  </span>
+                ) : null}
+                <h3 className="text-primary text-xl md:text-5xl font-bold">
+                  {item.title}
+                </h3>
+              </div>
               {index === activeIndex ? (
                 <div
                   className="md:hidden absolute left-8 top-12 -translate-x-1/2 z-50 pointer-events-none"
@@ -151,13 +159,27 @@ export const Timeline = ({
                   role="status"
                 >
                   <span className="rounded-md border border-neutral-200 dark:border-neutral-700 bg-background/90 dark:bg-neutral-900/90 shadow px-2 py-0.5 text-xs font-semibold text-neutral-600 dark:text-neutral-400 whitespace-nowrap">
-                    {item.title}
+                    <span className="inline-flex items-center gap-2">
+                      {item.date ? (
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                          {item.date}
+                        </span>
+                      ) : null}
+                      <span>{item.title}</span>
+                    </span>
                   </span>
                 </div>
               ) : null}
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
+              {item.date ? (
+                <div className="md:hidden mb-1">
+                  <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                    {item.date}
+                  </span>
+                </div>
+              ) : null}
               <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
                 {item.title}
               </h3>
