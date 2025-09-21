@@ -595,7 +595,7 @@ export function WeddingArcTimeline(
     {
       time: "May 2023",
       steps: [
-        { icon: <Plane className="h-5 w-5" />, content: 'First overseas holiday' },
+        { icon: <Plane className="h-5 w-5" />, content: 'Our first overseas holiday' },
       ],
     },
     {
