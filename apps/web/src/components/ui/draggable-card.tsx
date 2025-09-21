@@ -244,7 +244,7 @@ export function DraggableCardDemo() {
   const baseTopPx = 60;
 
   const rows = Math.ceil(TIMELINE_IMAGES.length / numColumns);
-  const totalHeightPx = baseTopPx + rows * rowStepPx + 800;
+  const totalHeightPx = baseTopPx + rows * rowStepPx ;
 
   const noise = (n: number, seed: number) => Math.sin(n * 0.91 + seed);
 
