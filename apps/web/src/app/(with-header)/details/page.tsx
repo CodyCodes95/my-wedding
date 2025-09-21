@@ -424,20 +424,7 @@ export default function DetailsPage() {
                         </div>
                       </div>
 
-                      {/* Removed Ljubljana city table per request */}
-
-                      <div className="rounded-lg bg-muted/40 p-4 text-muted-foreground text-sm">
-                        <p className="mb-2 font-medium">Sources & further reading</p>
-                        <ul className="list-disc space-y-1 pl-5">
-                          {SOURCES.map((s) => (
-                            <li key={s.url}>
-                              <a className="underline underline-offset-4" href={s.url} rel="noopener noreferrer" target="_blank">
-                                {s.label}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+      
                     </div>
                   )}
                 </div>

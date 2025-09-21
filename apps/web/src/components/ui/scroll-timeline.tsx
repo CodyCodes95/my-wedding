@@ -10,15 +10,9 @@ export function TimelineDemo(): React.ReactElement {
 
       images: [
         { img: "/timeline/web_start-dating.JPG", name: "When we started dating" },
+        { img: "/timeline/first-date.JPG", name: "Our first date" },
       ],
     },
-    {
-      title: "Our First Date",
-date: "2018",
-images: [
-  { img: "/timeline/first-date.JPG", name: "Our first date" },
-],
-},
 {
   title: "Teaching Ash how to drive",
   date: "2018",
@@ -52,7 +46,8 @@ images: [
         </div>
       ),
       images: [
-        { img: "/timeline/web_move-melb-1.jpg", name: "First Melbourne trip" },
+        { img: "/timeline/first-melb-1.jpg", name: "First Melbourne trip" },
+        { img: "/timeline/first-melb-2.JPG", name: "First Melbourne trip" },
       ],
     },
     {
@@ -75,6 +70,7 @@ images: [
       ),
       images: [
         { img: "/timeline/move-melb.jpg", name: "The big move to Melbourne" },
+        { img: "/timeline/web_move-melb-1.jpg", name: "The big move to Melbourne" },
         { img: "/timeline/web_move-melb-2.JPG", name: "Luna supervising our move" },
       ],
     },
@@ -90,82 +86,46 @@ images: [
         </div>
       ),
       images: [
+        { img: "/timeline/web_first-oveseas-1.jpg", name: "Our first overseas holiday" },
         { img: "/timeline/web_first-overseas-2.jpg", name: "Our first overseas holiday" },
       ],
     },
     {
       date: "May 2023",
-      title: "First time in Bled",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            We visit Bled, Slovenia for the first time.
-          </p>
-          
-        </div>
-      ),
-      images: [
+      title: "First time in Bled",ges: [
         { img: "/timeline/web_first-bled-1.jpg", name: "First time in Bled" },
         { img: "/timeline/web_first-bled-2.jpg", name: "Beautiful Bled memories" },
+        { img: "/timeline/web_first-bled-3.jpg", name: "Beautiful Bled memories" },
+        { img: "/timeline/web_first-bled-4.jpg", name: "Beautiful Bled memories" },
       ],
     },
     {
       date: "Dec 2023",
       title: "We welcome Biscuit",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            Biscuit came into our lives.
-          </p>
-          
-        </div>
-      ),
       images: [
         { img: "/timeline/web_son-biscuit-1.jpg", name: "Welcome home Biscuit" },
+        { img: "/timeline/web_son-biscuit-2.JPG", name: "Welcome home Biscuit" },
       ],
     },
     {
       date: "Jun 2024",
       title: "Second visit to Bled",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            We return to Bled, Slovenia for the second time.
-          </p>
-          
-        </div>
-      ),
       images: [
+        { img: "/timeline/web_2nd-bled.jpg", name: "Our second visit to Bled" },
         { img: "/timeline/web_second-bled-1.jpg", name: "Our second visit to Bled" },
       ],
     },
     {
       date: "Aug 2024",
       title: "We buy our first home",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            We buy and move into our first home together.
-          </p>
-          
-        </div>
-      ),
       images: [
+        { img: "/timeline/web_house-move.jpg", name: "Our new home" },
         { img: "/timeline/web_new-home-one.JPG", name: "Our new home" },
-        { img: "/timeline/web_new-home-2.jpg", name: "Moving into our home" },
       ],
     },
     {
       date: "Aug 2024",
-      title: "The Proposal 💍",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            That same evening, in our new home, I ask Ash to marry me. She said yes!
-          </p>
-          
-        </div>
-      ),
+      title: "The Proposal",
       images: [
         { img: "/timeline/web_propose.jpg", name: "The proposal" },
       ],
