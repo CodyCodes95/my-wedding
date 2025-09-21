@@ -35,17 +35,17 @@ export const DraggableCardBody = ({
   const velocityY = useVelocity(mouseY);
 
   const springConfig = {
-    stiffness: 100,
-    damping: 20,
-    mass: 0.5,
+    stiffness: 80,
+    damping: 30,
+    mass: 0.7,
   };
 
   const rotateX = useSpring(
-    useTransform(mouseY, [-300, 300], [25, -25]),
+    useTransform(mouseY, [-300, 300], [12, -12]),
     springConfig,
   );
   const rotateY = useSpring(
-    useTransform(mouseX, [-300, 300], [-25, 25]),
+    useTransform(mouseX, [-300, 300], [-12, 12]),
     springConfig,
   );
 
@@ -55,7 +55,7 @@ export const DraggableCardBody = ({
   );
 
   const glareOpacity = useSpring(
-    useTransform(mouseX, [-300, 0, 300], [0.2, 0, 0.2]),
+    useTransform(mouseX, [-300, 0, 300], [0.1, 0, 0.1]),
     springConfig,
   );
 
@@ -160,7 +160,7 @@ export const DraggableCardBody = ({
         willChange: "transform",
       }}
       animate={controls}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
@@ -223,6 +223,7 @@ const TIMELINE_IMAGES: string[] = [
   "/timeline/web_toastie-1.jpg",
 ];
 
+
 const filenameToTitle = (path: string): string => {
   const file = path.split("/").pop() ?? path;
   const base = file.replace(/\.[^.]+$/, "");
@@ -231,29 +232,42 @@ const filenameToTitle = (path: string): string => {
 
 export function DraggableCardDemo() {
   const numColumns = 4;
-  const columnPercents = [8, 28, 48, 68];
-  const rowStepPx = 260;
+  const columnPercents = [0, 24, 48, 72];
+  const rowStepPx = 320;
   const baseTopPx = 60;
 
   const rows = Math.ceil(TIMELINE_IMAGES.length / numColumns);
-  const totalHeightPx = baseTopPx + rows * rowStepPx + 400;
+  const totalHeightPx = baseTopPx + rows * rowStepPx + 800;
 
   const noise = (n: number, seed: number) => Math.sin(n * 0.91 + seed);
 
+  const [zOrder, setZOrder] = useState<Map<string, number>>(() => new Map());
+  const zCounterRef = useRef<number>(1000);
+
   return (
-    <div className="relative w-full" style={{ height: totalHeightPx }}>
-      <DraggableCardContainer className="relative w-full overflow-clip">
+    <div className="relative ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-screen" style={{ height: totalHeightPx }}>
+      <DraggableCardContainer className="relative w-full h-full overflow-visible">
         {TIMELINE_IMAGES.map((src, index) => {
           const title = filenameToTitle(src);
           const columnIndex = index % numColumns;
           const rowIndex = Math.floor(index / numColumns);
 
-          const jitterX = Math.round(noise(index, 1.7) * 60); // px
-          const jitterY = Math.round(noise(index, 2.3) * 30); // px
-          const rotationDeg = Math.round(noise(index, 3.1) * 6); // degrees
+          const jitterX = Math.round(noise(index, 1.7) * 24); // px
+          const jitterY = Math.round(noise(index, 2.3) * 14); // px
+          const rotationDeg = Math.round(noise(index, 3.1) * 4); // degrees
 
           const topPx = baseTopPx + rowIndex * rowStepPx + jitterY;
           const leftPercent = columnPercents[columnIndex];
+
+          const zIndex = zOrder.get(src) ?? index;
+          const bringToFront = () => {
+            zCounterRef.current += 1;
+            setZOrder((prev) => {
+              const next = new Map(prev);
+              next.set(src, zCounterRef.current);
+              return next;
+            });
+          };
 
           return (
             <div
@@ -263,10 +277,13 @@ export function DraggableCardDemo() {
                 top: topPx,
                 left: `calc(${leftPercent}% + ${jitterX}px)`,
                 transform: `rotate(${rotationDeg}deg)`,
+                zIndex,
               }}
+              onMouseOver={bringToFront}
+              onPointerDown={bringToFront}
             >
               <DraggableCardBody>
-                <div className="relative z-10 h-80 w-80">
+                <div className="relative z-10 h-80 w-full">
                   <Image
                     alt={title}
                     src={src}
