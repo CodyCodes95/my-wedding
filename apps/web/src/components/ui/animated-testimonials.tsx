@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type Testimonial = {
@@ -26,6 +26,9 @@ export const AnimatedTestimonials = ({
   onActiveChange?: (index: number) => void;
 }) => {
   const [active, setActive] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchActiveRef = useRef(false);
 
   const handleNext = () => {
     setActive((prev) => {
@@ -63,11 +66,48 @@ export const AnimatedTestimonials = ({
     const rnd = (seed * a + c) % m; // 0..m-1
     return Math.floor((rnd / m) * 21) - 10; // -10..10
   };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 1) return;
+    touchActiveRef.current = true;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!touchActiveRef.current) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - (touchStartXRef.current ?? 0);
+    const dy = touch.clientY - (touchStartYRef.current ?? 0);
+    touchActiveRef.current = false;
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    if (absDx < 40 || absDx <= absDy) return; // horizontal swipe threshold
+    if (dx < 0) {
+      handleNext();
+    } else {
+      handlePrev();
+    }
+  };
+
+  const handleTouchCancel = () => {
+    touchActiveRef.current = false;
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  };
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
       <div className="relative grid grid-cols-1 gap-20 md:grid-cols-2">
         <div>
-          <div className="relative h-80 w-full">
+          <div
+            className="relative h-80 w-full"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchCancel}
+            style={{ touchAction: "pan-y" }}
+          >
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div
@@ -112,6 +152,22 @@ export const AnimatedTestimonials = ({
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
+          <div className="mt-6 flex justify-center gap-4 md:justify-start">
+            <button
+              onClick={handlePrev}
+              type="button"
+              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
+            >
+              <IconArrowLeft className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:rotate-12 dark:text-neutral-400" />
+            </button>
+            <button
+              onClick={handleNext}
+              type="button"
+              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
+            >
+              <IconArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:-rotate-12 dark:text-neutral-400" />
+            </button>
           </div>
         </div>
         <div className="flex flex-col justify-between py-4">
@@ -177,22 +233,6 @@ export const AnimatedTestimonials = ({
               )}
             </div>
           </motion.div>
-          <div className="flex gap-4 pt-12 md:pt-0">
-            <button
-              onClick={handlePrev}
-              type="button"
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
-            >
-              <IconArrowLeft className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:rotate-12 dark:text-neutral-400" />
-            </button>
-            <button
-              onClick={handleNext}
-              type="button"
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
-            >
-              <IconArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:-rotate-12 dark:text-neutral-400" />
-            </button>
-          </div>
         </div>
       </div>
     </div>

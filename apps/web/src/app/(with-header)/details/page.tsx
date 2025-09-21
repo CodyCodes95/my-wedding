@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
 import { DraggableCardDemo } from '@/components/ui/draggable-card';
+import { TimelineDemo } from '@/components/ui/scroll-timeline';
 import { WeddingArcTimeline } from '@/components/magicui/arc-timeline';
 import SectionDivider from '@/components/section-divider';
 import RsvpForm from '@/components/rsvp-form';
@@ -295,7 +296,10 @@ export default function DetailsPage() {
               }
             />
           </div>
-          <div className="mt-12">
+          <div className="mt-12 md:hidden">
+            <TimelineDemo />
+          </div>
+          <div className="mt-12 hidden md:block">
             <DraggableCardDemo />
           </div>
         </div>
