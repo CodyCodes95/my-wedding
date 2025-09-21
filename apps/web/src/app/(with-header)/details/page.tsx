@@ -250,19 +250,89 @@ export default function DetailsPage() {
 
       {/* Details Section */}
       <section className="py-16" id="details">
-        <div className="container mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 text-center font-light text-4xl text-primary">
-            Details
-          </h2>
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="text-center">
-              <h3 className="mb-4 font-medium text-2xl">When</h3>
-              <p className="text-lg">October 24, 2026</p>
-            </div>
-            <div className="text-center">
-              <h3 className="mb-4 font-medium text-2xl">Where</h3>
-              <p className="text-lg">Bled, Slovenia</p>
-            </div>
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-light text-4xl text-primary mb-3">
+              Wedding Details
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Everything you need to know about our special day
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {/* Date Card */}
+            <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 to-primary/5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <CardContent className="p-8">
+                <div className="mb-6 flex justify-center">
+                  <div className="rounded-full bg-primary/20 p-4 group-hover:bg-primary/30 transition-colors duration-300">
+                    <svg className="size-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="mb-4 font-medium text-xl text-primary">When</h3>
+                <div className="space-y-1">
+                  <p className="font-light text-2xl text-foreground">October 24</p>
+                  <p className="font-medium text-primary">2026</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Location Card */}
+            <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 to-primary/5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <CardContent className="p-8">
+                <div className="mb-6 flex justify-center">
+                  <div className="rounded-full bg-primary/20 p-4 group-hover:bg-primary/30 transition-colors duration-300">
+                    <svg className="size-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="mb-4 font-medium text-xl text-primary">Where</h3>
+                <div className="space-y-1">
+                  <p className="font-light text-2xl text-foreground">Bled</p>
+                  <p className="font-medium text-primary">Slovenia</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Time Card */}
+            <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 to-primary/5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <CardContent className="p-8">
+                <div className="mb-6 flex justify-center">
+                  <div className="rounded-full bg-primary/20 p-4 group-hover:bg-primary/30 transition-colors duration-300">
+                    <svg className="size-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="mb-4 font-medium text-xl text-primary">Ceremony</h3>
+                <div className="space-y-1">
+                  <p className="font-light text-lg text-foreground">3:00 PM</p>
+                  <p className="text-sm text-muted-foreground">Lake Bled</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Season Card */}
+            <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 to-primary/5 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <CardContent className="p-8">
+                <div className="mb-6 flex justify-center">
+                  <div className="rounded-full bg-primary/20 p-4 group-hover:bg-primary/30 transition-colors duration-300">
+                    <svg className="size-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="mb-4 font-medium text-xl text-primary">Season</h3>
+                <div className="space-y-1">
+                  <p className="font-light text-lg text-foreground">Autumn</p>
+                  <p className="text-sm text-muted-foreground">Perfect weather</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
