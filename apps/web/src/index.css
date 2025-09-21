@@ -204,13 +204,13 @@ body {
   
   /* Global text selection styling */
   ::selection {
-    background-color: oklch(var(--primary));
-    color: oklch(var(--primary-foreground));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
   }
   
   ::-moz-selection {
-    background-color: oklch(var(--primary));
-    color: oklch(var(--primary-foreground));
+    background-color: var(--primary);
+    color: var(--primary-foreground);
   }
   
   body {
