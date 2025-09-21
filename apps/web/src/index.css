@@ -201,6 +201,18 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+  
+  /* Global text selection styling */
+  ::selection {
+    background-color: oklch(var(--primary));
+    color: oklch(var(--primary-foreground));
+  }
+  
+  ::-moz-selection {
+    background-color: oklch(var(--primary));
+    color: oklch(var(--primary-foreground));
+  }
+  
   body {
     @apply bg-background text-foreground;
     background-image:
