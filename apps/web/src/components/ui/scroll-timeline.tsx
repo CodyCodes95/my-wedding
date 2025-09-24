@@ -92,7 +92,8 @@ export function TimelineDemo(): React.ReactElement {
     },
     {
       date: "May 2023",
-      title: "First time in Bled",ges: [
+      title: "First time in Bled",
+      images: [
         { img: "/timeline/web_first-bled-1.jpg", name: "First time in Bled" },
         { img: "/timeline/web_first-bled-2.jpg", name: "Beautiful Bled memories" },
         { img: "/timeline/web_first-bled-3.jpg", name: "Beautiful Bled memories" },
