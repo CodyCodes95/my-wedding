@@ -227,7 +227,7 @@ const TIMELINE_IMAGES = [
   { imgSrc: "/timeline/web_first-bled-4.jpg", title: "Cycling the Bled countryside" },
     { imgSrc: "/timeline/web_son-biscuit-1.jpg", title: "Welcome home Biscuit" },
   { imgSrc: "/timeline/web_son-biscuit-2.JPG", title: "" },
-  { imgSrc: "/timeline/web_second-bled-1.jpg", title: "Our second visit to Bled" },
+  { imgSrc: "/timeline/web_bled.JPG", title: "Our second visit to Bled" },
     { imgSrc: "/timeline/web_2nd-overseas-1.jpg", title: "" },
   { imgSrc: "/timeline/web_second-overseas-2.jpg", title: "" },
   { imgSrc: "/timeline/web_second-overseas-4.jpg", title: "" },
