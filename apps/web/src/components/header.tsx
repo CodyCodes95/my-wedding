@@ -1,6 +1,5 @@
 'use client';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from './ui/button';
 
 export default function Header() {
@@ -9,8 +8,29 @@ export default function Header() {
     { to: '#about', label: 'Our Story' },
     { to: '#getting-there', label: 'Getting there' },
     { to: '#accommodation', label: 'Accommodation' },
-      
   ];
+
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+
+    // If we're not on the details page, navigate there first
+    if (window.location.pathname !== '/details') {
+      window.location.href = `/details${targetId}`;
+      return;
+    }
+
+    // If we're already on the details page, scroll to the target
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      const headerHeight = 80; // Approximate header height
+      const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="bg-[#f8f6f3]">
@@ -19,13 +39,14 @@ export default function Header() {
         <nav className="hidden gap-6 md:flex">
           {links.map(({ to, label }) => {
             return (
-              <Link
-                className="font-medium text-primary text-sm transition-colors hover:text-primary/80"
+              <a
+                className="font-medium text-primary text-sm transition-colors hover:text-primary/80 cursor-pointer"
                 href={to}
                 key={to}
+                onClick={(e) => handleSmoothScroll(e, to)}
               >
                 {label}
-              </Link>
+              </a>
             );
           })}
         </nav>
@@ -41,11 +62,11 @@ export default function Header() {
               width={140}
             />
           </div>
-          <Link href="/details#rsvp">
+          <a href="/details#rsvp" onClick={(e) => handleSmoothScroll(e, '#rsvp')}>
             <Button className="bg-primary px-8 py-2 font-medium text-primary-foreground text-sm hover:bg-primary/90">
               RSVP
             </Button>
-          </Link>
+          </a>
         </div>
       </div>
     </div>
