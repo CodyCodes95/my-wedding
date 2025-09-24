@@ -112,7 +112,7 @@ export function TimelineDemo(): React.ReactElement {
       date: "Jun 2024",
       title: "Second visit to Bled",
       images: [
-        { img: "/timeline/web_2nd-bled.jpg", name: "Our second visit to Bled" },
+        { img: "/timeline/web_2nd-bled.JPG", name: "Our second visit to Bled" },
         { img: "/timeline/web_second-bled-1.jpg", name: "Our second visit to Bled" },
       ],
     },
